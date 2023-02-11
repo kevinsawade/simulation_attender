@@ -1,0 +1,99 @@
+version: '3'
+
+services:
+  openldap:
+    image: bitnami/openldap:latest
+    container_name: openldap
+    hostname: openldap.example.org
+    domainname: example.org
+    ports:
+      - 389:389
+      - 636:636
+    environment:
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=adminpassword
+      - LDAP_USERS=user01,user02
+      - LDAP_PASSWORDS=password1,password2
+      - LDAP_CONFIG_ADMIN_ENABLED=yes
+      - LDAP_CONFIG_ADMIN_USERNAME=admin
+      - LDAP_CONFIG_ADMIN_PASSWORD=configpassword
+      - LDAP_ENABLE_TLS=yes
+      - LDAP_PORT_NUMBER=389
+      - LDAP_LDAPS_PORT_NUMBER=636
+      - LDAP_TLS_CERT_FILE=/certs/server.crt
+      - LDAP_TLS_KEY_FILE=/certs/server.key
+      - LDAP_TLS_CA_FILE=/certs/ca.crt
+    volumes:
+      - "$PWD/certs:/certs"
+      - "$PWD/openldap_data:/bitnami/openldap"
+    networks:
+      default:
+        aliases:
+          - openldap.example.org
+
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    domainname: example.org
+    hostname: phpldapadmin
+    ports:
+      - "10080:80"
+      - "10443:443"
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "true"
+    depends_on:
+      - openldap
+    networks:
+      default:
+        aliases:
+          - phpldapadmin.example.org
+
+
+  mariadb-galera:
+    image: bitnami/mariadb-galera:latest
+    container_name: mariadb-galera
+    domainname: example.org
+    hostname: mariadb-galera
+    ports:
+      - "3306:3306"
+    environment:
+      - MARIADB_ROOT_PASSWORD=root-password
+      - MARIADB_GALERA_MARIABACKUP_PASSWORD=backup-password
+      - MARIADB_USER=customuser
+      - MARIADB_DATABASE=customdatabase
+      - MARIADB_ENABLE_LDAP=yes
+      - LDAP_URI=ldap://openldap:389
+      - LDAP_BASE=dc=example,dc=org
+      - LDAP_BIND_DN=cn=admin,dc=example,dc=org
+      - LDAP_BIND_PASSWORD=adminpassword
+    depends_on:
+      - openldap
+    networks:
+      default:
+        aliases:
+          - mariadb-galera.example.org
+          
+
+  client:
+    image: kevisnawade/ldap-client
+    container_name: client
+    domainname: example.org
+    hostname: client.example.org
+    ports:
+      - "222:22"
+    build:
+      context: .
+      dockerfile: ldap_client/Dockerfile
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
+      # - LDAP_URI=ldap://openldap:398
+      # - LDAP_BASE=dc=example,dc=orgmv ng  
+      # - LDAP_BIND_DN=cd=admin,dc=example,dc=org
+    depends_on:
+      - openldap
+    networks:
+      default:
+        aliases:
+          - client.example.org

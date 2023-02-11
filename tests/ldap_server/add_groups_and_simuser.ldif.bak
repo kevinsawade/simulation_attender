@@ -1,0 +1,29 @@
+dn: ou=groups,dc=local,dc=dev
+ou: groups
+objectClass: organizationalUnit
+
+dn: ou=users,dc=local,dc=dev
+ou: users
+objectClass: organizationalUnit
+
+dn: cn=users,ou=groups,dc=local,dc=dev
+cn: users
+gidNumber: 500
+objectClass: posixGroup
+
+dn: uid=simuser,ou=users,dc=local,dc=dev
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: simuser
+uid: simuser
+uidNumber: 1000
+gidNumber: 500
+homeDirectory: /home/simuser
+loginShell: /bin/bash
+gecos: simuser
+userPassword: SimuserPassword
+shadowLastChange: 0
+shadowMax: 0
+shadowWarning: 0

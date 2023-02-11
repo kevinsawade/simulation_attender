@@ -1,0 +1,101 @@
+version: '2'
+services:
+  base:
+    build:
+      context: .
+      dockerfile: base/Dockerfile
+    image: kevinsawade/slurm_base
+    command: echo
+
+
+  slurm-master:
+    build:
+      context: .
+      dockerfile: slurm_master/Dockerfile
+    image: kevinsawade/slurm_master
+    hostname: slurm-master.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - slurm-db
+      - base
+
+  slurm-db:
+    build:
+      context: .
+      dockerfile: slurm_db/Dockerfile
+    image: kevinsawade/slurm_db
+    hostname: slurm-database.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - mysql
+      - base
+
+
+  slurm-node1:
+    build:
+      context: .
+      dockerfile: slurm_node/Dockerfile
+    image: kevisnawade/slurm_node
+    hostname: slurm-node1.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - base
+
+
+  slurm-node2:
+    build:
+      context: .
+      dockerfile: slurm_node/Dockerfile
+    image: kevisnawade/slurm_node
+    hostname: slurm-node2.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - base
+
+
+  slurm-login-node:
+    build:
+      context: .
+      dockerfile: slurm_node/Dockerfile
+    image: kevisnawade/slurm_node
+    hostname: slurm-login-node.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - base
+
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=sql_root_passw0rd
+      - MYSQL_PASSWORD=sql_passw0rd
+      - MYSQL_USER=mysql_user
+      - MYSQL_DATABASE=mysql_db
+    command: --innodb-buffer-pool-size=1024M --innodb-log-file-size=64M --innodb-lock-wait-timeout=900
+    hostname: slurm-db.local.dev
+    networks:
+      - slurm
+
+networks:
+  slurm:
+
+volumes:
+  slurm-shared-vol:
