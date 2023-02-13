@@ -1,8 +1,6 @@
 FROM ubuntu:22.04
 
-#####################
-# BASICS
-#####################
+# some basics, which I need no matter what :p
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     sudo \
@@ -13,9 +11,7 @@ RUN apt-get update \
     iputils-ping \
     apt-utils \
     curl \
-    iproute2 \
-    lsb-release \
-    ca-certificates
+    iproute2
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
 
 
@@ -28,11 +24,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     sshpass
 
 # create localadmin user which has sudo priviliges
-RUN useradd -ms /bin/bash -d /localadmin localadmin
+RUN useradd -ms /bin/bash localadmin
 RUN usermod -aG sudo localadmin
 RUN echo "localadmin:password" | chpasswd
 RUN echo 'localadmin  ALL=(ALL:ALL) ALL' >> /etc/sudoers
-RUN chown -R localadmin /localadmin
+RUN chown -R localadmin /home/localadmin
 
 # make changes to openssh
 RUN mkdir -p /var/run/sshd
@@ -56,8 +52,9 @@ RUN mkdir -p /home/localadmin/.ssh \
 # LDAP
 #####################
 # ldap packages
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     dialog \
+    ca-certificates \
     libpam-ldapd \
     ldap-utils \
     libnss-ldapd \
@@ -71,12 +68,11 @@ RUN export DEBIAN_FRONTEND=gtk
 # COPY ldap_client/ldap.conf /etc/ldap.conf
 # COPY ldap_client/pam_ldap.conf /etc/pam_ldap.conf
 # COPY ldap_client/pam.d/common-password /etc/pam.d/common-password
-COPY ldap_client/pam.d/common-session /etc/pam.d/common-session
+# COPY ldap_client/pam.d/common-session /etc/pam.d/common-session
 # COPY ldap_client/pam.d_2/common-auth /etc/pam.d/common-auth
 # COPY ldap_client/pam.d_2/common-account /etc/pam.d/common-account
 # COPY ldap_client/pam.d/login /etc/pam.d/login
-COPY ldap_client/nslcd.conf /etc/nslcd.conf
-COPY ldap_client/nsswitch.conf /etc/nsswitch.conf
+# COPY ldap_client/nsswitch.conf /etc/nsswitch.conf
 # COPY ldap_client/libnss-ldap.conf /etc/libnss-ldap.conf
 
 # copy the certificat

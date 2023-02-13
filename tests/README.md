@@ -13,7 +13,7 @@ $ docker compose up --build
 ssh into the client machine
 
 ```bash
-$ ssh -p localadmin@localhost
+$ ssh -p 222 localadmin@localhost
 ```
 
 with the password `localadminpassword`
@@ -42,6 +42,10 @@ User: cn=admin,dc=example,dc=org
 Password: adminpassword
 
 **Useful LDAP coomands**
+
+Load ldif file:
+
+
 
 On the LDAP server:
 
