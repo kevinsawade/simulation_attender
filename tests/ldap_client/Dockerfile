@@ -84,11 +84,23 @@ COPY certs/ca.crt /usr/local/share/ca-certificates/ca.crt
 RUN update-ca-certificates
 
 #####################
+# NFS
+#####################
+# ldap packages
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    nfs-client \
+    nfs-common \
+    portmap
+
+#####################
 # PORTS
 #####################
 # expose ssh port
 EXPOSE 22
 
+#####################
+# Wait for it and tini
+#####################
 # add wait for it to allow waiting in docker containers
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /wait-for-it.sh
 RUN chmod a+rx /wait-for-it.sh

@@ -38,8 +38,8 @@ services:
     domainname: example.org
     hostname: phpldapadmin
     ports:
-      - "10080:80"
-      - "10443:443"
+      - 10080:80
+      - 10443:443
     environment:
       PHPLDAPADMIN_LDAP_HOSTS: "openldap"
       PHPLDAPADMIN_HTTPS: "true"
@@ -49,14 +49,6 @@ services:
       default:
         aliases:
           - phpldapadmin.example.org
-
-  home:
-    image: erichough/nfs-server:latest
-    container_name: nfs
-    domainname: example.org
-    hostname: nfs
-    ports:
-      - "2049:2049"
           
 
   client:
@@ -65,7 +57,7 @@ services:
     domainname: example.org
     hostname: client.example.org
     ports:
-      - "222:22"
+      - 222:22
     build:
       context: .
       dockerfile: ldap_client/Dockerfile
@@ -77,8 +69,26 @@ services:
       default:
         aliases:
           - client.example.org
+
+  nfs:
+    image: erichough/nfs-server:latest
+    container_name: nfs-server
+    domainname: example.org
+    hostname: nfs.example.org
+    privileged: true
+    cap_add:
+      - CAP_SYS_ADMIN
+    ports:
+      - 2049:2049
+    environment:
+      - SHARED_DIRECTORY=/data
+    networks:
+      default:
+        aliases:
+          - nfs.example.org
     volumes:
-      - mnt_home:/home
+      - "./nfs_mount:/nfs"
+      - "./nfs_server/exports:/etc/exports:ro"
 
   # client2:
   #   image: kevisnawade/ldap-client

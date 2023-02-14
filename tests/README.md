@@ -2,6 +2,14 @@
 
 These tests build a complete HPC network with SLURM/LDAP/SSH/ENVIRONMENT MODULES
 
+## Important stuff at the start
+
+The nfs docker also needs the nfs kernel module. Do
+
+```bash
+sudo modprobe {nfs,nfsd,rpcsec_gss_krb5}
+```
+
 ## Quickstart
 
 Start the container network with
