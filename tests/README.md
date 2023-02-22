@@ -75,3 +75,26 @@ List users:
 ```bash
 ldapsearch -H ldapi:/// -Y EXTERNAL -b "ou=users,dc=example,dc=org" -LLL -Q
 ```
+
+## NFS Filesystem
+
+```
+/home client.example.org(rw,fsid=0,sync,no_root_squash,no_subtree_check)
+```
+
+For the entrypoint:
+
+```
+/etc/init.d/nfs-kernel-server start
+mkdir -p /nfs
+chown -R nobody:nogroup /nfs
+chmod 777 /nfs
+
+# cat /etc/exports
+/nfs *(rw,sync,no_subtree_check)
+```
+
+
+
+
+
