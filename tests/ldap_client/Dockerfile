@@ -28,11 +28,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     sshpass
 
 # create localadmin user which has sudo priviliges
-RUN useradd -ms /bin/bash -d /localadmin localadmin
+RUN useradd -s /bin/bash -d /localadmin localadmin
 RUN usermod -aG sudo localadmin
 RUN echo "localadmin:password" | chpasswd
 RUN echo 'localadmin  ALL=(ALL:ALL) ALL' >> /etc/sudoers
-RUN chown -R localadmin /localadmin
 
 # make changes to openssh
 RUN mkdir -p /var/run/sshd
@@ -41,15 +40,15 @@ RUN echo "PermitRootLogin no" >> /etc/ssh/sshd_config
 RUN if [ ! -d /var/run/sshd ] ; then mkdir /var/run/sshd ; ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N '' ; fi
 RUN chown localadmin /etc/ssh/ssh_host_rsa_key
 RUN chown localadmin /etc/ssh/ssh_host_rsa_key.pub
-COPY ssh/ssh_config /home/localadmin/.ssh/config
-RUN mkdir -p /home/localadmin/.ssh \
-    && chmod 0700 /home/localadmin/.ssh \
-    && ssh-keygen -b 2048 -t rsa -f /home/localadmin/.ssh/id_rsa -q -N "" -C "localadmin@$(hostname)-$(date -I)" \
-    && touch /home/localadmin/.ssh/authorized_keys \
-    && cat /home/localadmin/.ssh/id_rsa.pub > /home/localadmin/.ssh/authorized_keys \
-    && chmod 0640 home/localadmin/.ssh/authorized_keys \
-    && chown -R localadmin /home/localadmin/.ssh \
-    && chmod 0644 home/localadmin/.ssh/config
+COPY ssh/ssh_config /localadmin/.ssh/config
+RUN mkdir -p /localadmin/.ssh \
+    && chmod 0700 /localadmin/.ssh \
+    && ssh-keygen -b 2048 -t rsa -f /localadmin/.ssh/id_rsa -q -N "" -C "localadmin@$(hostname)-$(date -I)" \
+    && touch /localadmin/.ssh/authorized_keys \
+    && cat /localadmin/.ssh/id_rsa.pub > /localadmin/.ssh/authorized_keys \
+    && chmod 0640 localadmin/.ssh/authorized_keys \
+    && chown -R localadmin /localadmin/.ssh \
+    && chmod 0644 localadmin/.ssh/config
 
 
 #####################

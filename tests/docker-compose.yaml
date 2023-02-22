@@ -12,8 +12,8 @@ services:
     environment:
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=adminpassword
-      - LDAP_USERS=user01,user02
-      - LDAP_PASSWORDS=password1,password2
+      - LDAP_USERS=user01,user02,slurm
+      - LDAP_PASSWORDS=password1,password2,password
       - LDAP_CONFIG_ADMIN_ENABLED=yes
       - LDAP_CONFIG_ADMIN_USERNAME=admin
       - LDAP_CONFIG_ADMIN_PASSWORD=configpassword
@@ -49,15 +49,29 @@ services:
       default:
         aliases:
           - phpldapadmin.example.org
+
+
+  mysql:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=sql_root_passw0rd
+      - MYSQL_PASSWORD=sql_passw0rd
+      - MYSQL_USER=mysql_user
+      - MYSQL_DATABASE=mysql_db
+    command: --innodb-buffer-pool-size=1024M --innodb-log-file-size=64M --innodb-lock-wait-timeout=900
+    hostname: slurm-db.example.org
           
 
   client:
-    image: kevisnawade/ldap-client
+    image: kevinsawade/ldap-client
     container_name: client
     domainname: example.org
     hostname: client.example.org
     ports:
-      - 222:22
+      - 223:22
     build:
       context: .
       dockerfile: ldap_client/Dockerfile
@@ -69,44 +83,93 @@ services:
       default:
         aliases:
           - client.example.org
+    volumes:
+      - "./nfs_mount:/home"
 
-  nfs:
-    image: erichough/nfs-server:latest
-    container_name: nfs-server
+  # build the base image with munge
+  slurm_base:
+    image: kevinsawade/slurm-base
+    container_name: slurm_base
+    build:
+      context: .
+      dockerfile: slurm_base/Dockerfile
+    command: echo "Build successfull. I will close now."
+
+
+  slurm-db:
+    build:
+      context: .
+      dockerfile: slurm_db/Dockerfile
+    image: kevinsawade/slurm_db
+    hostname: slurm-database.local.dev
+    networks:
+      - slurm
+    volumes:
+      - slurm-shared-vol:/work
+    depends_on:
+      - mysql
+      - base
+
+
+  slurm_master:
+    image: kevinsawade/slurm-master
+    container_name: slurm_master
     domainname: example.org
-    hostname: nfs.example.org
-    privileged: true
-    cap_add:
-      - CAP_SYS_ADMIN
+    hostname: slurm_master
     ports:
-      - 2049:2049
+      - 222:22
+    build:
+      context: .
+      dockerfile: slurm_master/Dockerfile
+      args:
+         - SLURM_VERSION=22.05.8
     environment:
-      - SHARED_DIRECTORY=/data
+      - LDAP_ADMIN_PASSWORD=adminpassword
+    depends_on:
+      - slurm_base
     networks:
       default:
         aliases:
-          - nfs.example.org
+          - slurm_master.example.org
     volumes:
-      - "./nfs_mount:/nfs"
-      - "./nfs_server/exports:/etc/exports:ro"
+      - "./nfs_mount:/home"
 
-  # client2:
-  #   image: kevisnawade/ldap-client
-  #   container_name: client2
-  #   domainname: example.org
-  #   hostname: client.example.org
-  #   ports:
-  #     - "223:22"
+
+  # nfs2:
+  #   image: kevinsawade/nfs-server
   #   build:
   #     context: .
-  #     dockerfile: ldap_client/Dockerfile
-  #   environment:
-  #     - LDAP_ADMIN_PASSWORD=adminpassword
-  #   depends_on:
-  #     - openldap
+  #     dockerfile: nfs_server/Dockerfile
+  #   container_name: nfs-server-2
+  #   domainname: example.org
+  #   hostname: nfs2.example.org
+  #   privileged: true
+  #   cap_add:
+  #     - CAP_SYS_ADMIN
+  #   ports:
+  #     - 2049:2049
   #   networks:
   #     default:
   #       aliases:
-  #         - client.example.org
+  #         - nfs2.example.org
+
+  # nfs:
+  #   image: erichough/nfs-server:latest
+  #   container_name: nfs-server
+  #   domainname: example.org
+  #   hostname: nfs.example.org
+  #   privileged: true
+  #   cap_add:
+  #     - CAP_SYS_ADMIN
+  #   ports:
+  #     - 2050:2049
+  #   environment:
+  #     - SHARED_DIRECTORY=/data
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - nfs.example.org
   #   volumes:
-  #     - mnt_home:/home
+  #     - "./nfs_mount:/home"
+  #     - "./nfs_mount:/nfs"
+  #     - "./nfs_server/exports:/etc/exports:ro"
