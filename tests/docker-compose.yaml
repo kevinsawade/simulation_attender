@@ -24,8 +24,8 @@ services:
       - LDAP_TLS_KEY_FILE=/certs/server.key
       - LDAP_TLS_CA_FILE=/certs/ca.crt
     volumes:
-      - "$PWD/certs:/certs"
-      - "$PWD/openldap_data:/bitnami/openldap"
+      - "$PWD/certs:/certs:Z"
+      - "./openldap_data:/bitnami/openldap:Z"
     networks:
       default:
         aliases:

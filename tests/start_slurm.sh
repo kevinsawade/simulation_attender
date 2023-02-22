@@ -1,3 +1,5 @@
 #!/bin/bash
 
-docker compose up -d --build
+mkdir -p openldap_data
+mkdir -p nfs_mount
+docker compose up --build
