@@ -24,7 +24,7 @@ ssh into the client machine
 $ ssh -p 222 localadmin@localhost
 ```
 
-with the password `localadminpassword`
+with the password `password`
 
 from there, you can login into an ssh-machine which has gromacs installed:
 
@@ -40,22 +40,26 @@ or you can ssh into the SLURM cluster with
 $ ssh user01@cluster
 ```
 
-with password `password`.
+with password `password1`.
 
+## LDAP
 
-## LDAP PHP server
+The users on the docker-composed SLURM cluster are centrally managed by an LDAP server. This server running openldap is provided by the `bitnami/openldap` docker image.
 
-Acces via: https://127.0.0.1:10443
-User: cn=admin,dc=example,dc=org
-Password: adminpassword
+### Graphical interface for LDAP
 
-**Useful LDAP coomands**
+A graphical interface for the LDAP server is avaialable under https://127.0.0.1:10443, use 
 
-Load ldif file:
+ `````
+ user: cn=admin,dc=example,dc=org
+ password: adminpassword
+ `````
 
+for login credentials. The graphical interface is provided by the `osixia/phpldapadmin` image.
 
+### Log into LDAP server
 
-On the LDAP server:
+The LDAP server itself can be accessed via `docker exec -it openldap /bin/bash`. There, you can probe the LDAP configuration with some of the these commands:
 
 List everything:
 
@@ -76,25 +80,34 @@ List users:
 ldapsearch -H ldapi:/// -Y EXTERNAL -b "ou=users,dc=example,dc=org" -LLL -Q
 ```
 
-## NFS Filesystem
+## MariaDB
+
+SLURM needs access to a sql database. Inside the docker compose environment, the database is provided by the `mariadb` image.
+
+### Graphical interface for MariaDB
+
+You can inspect the database with a graphical user interface using these credentials:
 
 ```
-/home client.example.org(rw,fsid=0,sync,no_root_squash,no_subtree_check)
+http://localhost:8080
+System: MySQL
+Server: db.example.org
+Username: mysql_user
+Password: sql_passw0rd
+Database: mysql_db
 ```
 
-For the entrypoint:
+## Grafana
 
-```
-/etc/init.d/nfs-kernel-server start
-mkdir -p /nfs
-chown -R nobody:nogroup /nfs
-chmod 777 /nfs
+## Permissions
 
-# cat /etc/exports
-/nfs *(rw,sync,no_subtree_check)
+Sometimes permissions of the persistent directories can make docker containers fail. I fixed it with
+
+```bash
+chmod -R ugo+rwx openldap_data
 ```
 
-
+But I have to admit, that this is not the most elegant solution. There needs to be a better way in the future.
 
 
 

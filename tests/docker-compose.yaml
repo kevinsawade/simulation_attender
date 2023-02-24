@@ -1,5 +1,8 @@
 version: '3.7'
 
+volumes:
+  grafana-data:
+
 services:
   openldap:
     image: bitnami/openldap:latest
@@ -12,8 +15,8 @@ services:
     environment:
       - LDAP_ADMIN_USERNAME=admin
       - LDAP_ADMIN_PASSWORD=adminpassword
-      - LDAP_USERS=user01,user02,slurm
-      - LDAP_PASSWORDS=password1,password2,password
+      - LDAP_USERS=user01,user02
+      - LDAP_PASSWORDS=password1,password2
       - LDAP_CONFIG_ADMIN_ENABLED=yes
       - LDAP_CONFIG_ADMIN_USERNAME=admin
       - LDAP_CONFIG_ADMIN_PASSWORD=configpassword
@@ -24,13 +27,12 @@ services:
       - LDAP_TLS_KEY_FILE=/certs/server.key
       - LDAP_TLS_CA_FILE=/certs/ca.crt
     volumes:
-      - "$PWD/certs:/certs:Z"
-      - "./openldap_data:/bitnami/openldap:Z"
+      - ./certs:/certs
+      - ./openldap_data:/bitnami/openldap
     networks:
       default:
         aliases:
           - openldap.example.org
-
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -50,7 +52,6 @@ services:
         aliases:
           - phpldapadmin.example.org
 
-
   mysql:
     image: mariadb:latest
     restart: always
@@ -62,8 +63,28 @@ services:
       - MYSQL_USER=mysql_user
       - MYSQL_DATABASE=mysql_db
     command: --innodb-buffer-pool-size=1024M --innodb-log-file-size=64M --innodb-lock-wait-timeout=900
-    hostname: slurm-db.example.org
-          
+    hostname: db.example.org
+    networks:
+      default:
+        aliases:
+          - db.example.org
+
+  mysql_gui:
+    image: adminer:latest
+    restart: always
+    ports:
+      - 8080:8080
+
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
 
   client:
     image: kevinsawade/ldap-client
@@ -102,37 +123,37 @@ services:
       dockerfile: slurm_db/Dockerfile
     image: kevinsawade/slurm_db
     hostname: slurm-database.local.dev
-    networks:
-      - slurm
-    volumes:
-      - slurm-shared-vol:/work
     depends_on:
       - mysql
-      - base
-
-
-  slurm_master:
-    image: kevinsawade/slurm-master
-    container_name: slurm_master
-    domainname: example.org
-    hostname: slurm_master
-    ports:
-      - 222:22
-    build:
-      context: .
-      dockerfile: slurm_master/Dockerfile
-      args:
-         - SLURM_VERSION=22.05.8
-    environment:
-      - LDAP_ADMIN_PASSWORD=adminpassword
-    depends_on:
       - slurm_base
     networks:
       default:
         aliases:
-          - slurm_master.example.org
-    volumes:
-      - "./nfs_mount:/home"
+          - slurm-db.example.org
+
+
+  # slurm_master:
+  #   image: kevinsawade/slurm-master
+  #   container_name: slurm_master
+  #   domainname: example.org
+  #   hostname: slurm_master
+  #   ports:
+  #     - 222:22
+  #   build:
+  #     context: .
+  #     dockerfile: slurm_master/Dockerfile
+  #     args:
+  #        - SLURM_VERSION=22.05.8
+  #   environment:
+  #     - LDAP_ADMIN_PASSWORD=adminpassword
+  #   depends_on:
+  #     - slurm_base
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - slurm_master.example.org
+  #   volumes:
+  #     - "./nfs_mount:/home"
 
 
   # nfs2:

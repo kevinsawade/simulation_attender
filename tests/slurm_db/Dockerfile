@@ -1,4 +1,4 @@
-FROM kevinsawade/slurm_base
+FROM kevinsawade/slurm-base
 MAINTAINER kevinsawade
 
 # install slurm-required packages
@@ -62,6 +62,6 @@ COPY slurm_base/cgroup.conf /etc/slurm-llnl/cgroup.conf
 # run the entrypoint
 COPY slurm_db/slurm_db_entrypoint.sh slurm_db_entrypoint.sh
 RUN chmod a+wrx slurm_db_entrypoint.sh
-COPY slurm_acct_db.sql slurm_acct_db.sql
+COPY slurm_db/slurm_acct_db.sql slurm_acct_db.sql
 RUN chmod a+wrx slurm_acct_db.sql
 CMD ["/slurm_db_entrypoint.sh"]

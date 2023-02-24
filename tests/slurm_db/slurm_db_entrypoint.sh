@@ -11,17 +11,17 @@ id
 
 # wait for the sql-server to be available and add slurm to the database
 MYSQL_ROOT_PASSWORD=sql_root_passw0rd
-/wait-for-it.sh slurm-db.local.dev:3306 --strict -- echo "slurm-db.local.dev db(3306) is up" ; mysql -h slurm-db.local.dev -u root -p$MYSQL_ROOT_PASSWORD < /slurm_acct_db.sql
+/wait-for-it.sh db.example.org:3306 --strict -- echo "db.example.org db(3306) is up" ; mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD < /slurm_acct_db.sql
   
 # start the munge daeomon
-sudo -u munge service munge start
+# sudo -u munge service munge start
 # su -u munge /sbin/munged
-munge -n
-munge -n | unmunge
-remunge
+# munge -n
+# munge -n | unmunge
+# remunge
 
 # start the slurmdb daemon
-sudo -u slurm service slurmdbd start
+# sudo -u slurm service slurmdbd start
 
 # now we bring the primary process back into the foreground
 # and leave it there
