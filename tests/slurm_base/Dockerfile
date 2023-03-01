@@ -23,7 +23,8 @@ RUN apt-get update && apt-get install -y \
     python3 \
     psmisc \
     mysql-client \
-    libmysqlclient-dev
+    libmysqlclient-dev \
+    cgroup-tools
 RUN pip3 install Cython nose
 
 #####################
@@ -48,14 +49,13 @@ RUN set -x \
     && git clone -b ${SLURM_VERSION} --single-branch --depth=1 https://github.com/SchedMD/slurm.git /slurm_install/slurm \
     && cd /slurm_install/slurm \
     && ./configure --enable-debug --prefix=/usr --sysconfdir=/etc/slurm \
-        --with-mysql_config=/usr/bin  --libdir=/usr/lib64 \
+        --with-mysql_config=/usr/bin  --libdir=/usr/lib64 --with-cgroup \
     && make install \
     && install -D -m644 etc/cgroup.conf.example /etc/slurm/cgroup.conf.example \
     && install -D -m644 etc/slurm.conf.example /etc/slurm/slurm.conf.example \
     && install -D -m644 etc/slurmdbd.conf.example /etc/slurm/slurmdbd.conf.example \
     && install -D -m644 contribs/slurm_completion_help/slurm_completion.sh /etc/profile.d/slurm_completion.sh \
     && cd .. \
-    && rm -rf slurm \
     && groupadd -r --gid=990 slurm \
     && useradd -r -g slurm --uid=990 slurm \
     && mkdir -p /etc/sysconfig/slurm \
