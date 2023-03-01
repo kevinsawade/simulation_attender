@@ -28,10 +28,7 @@ sed -i "s/REPLACE_IT/CPUs=$(nproc)/g" /etc/slurm/slurm.conf
 /wait-for-it.sh slurm-db.example.org:6817 --strict -- echo "slurm-db.example.org 6817 is up"
 
 # start the slurm control daemons
-/usr/bin/sacctmgr --immediate add cluster name=cluster
-sleep 2s
-exec gosu slurm /usr/sbin/slurmctld -Dvvv
 # /wait-for-it.sh slurm-node1.local.dev:6818 --strict -- service slurmctld start
 
 # use this, if the docker container automatically terminates, but you want to keep it running
-# tail -f /dev/null
+tail -f /dev/null

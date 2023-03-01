@@ -1,1 +1,15 @@
-slurm-old
+*
+!ldap_client/ldap_client_entrypoint.sh
+!certs/ca.crt
+!ldap_client/nslcd.conf
+!ldap_client/nsswitch.conf
+!ldap_client/pam.d/common-session
+!ssh/ssh_config
+!munge/munge.key
+!slurm_db/slurmdbd.conf
+!slurm_base/slurm.conf
+!slurm_base/cgroup.conf
+!slurm_db/slurm_db_entrypoint.sh
+!slurm_db/slurm_acct_db.sql
+!slurm_master/slurm_master_entrypoint.sh
+!slurm_node/slurm_node_entrypoint.sh

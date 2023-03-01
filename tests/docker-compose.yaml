@@ -29,10 +29,12 @@ services:
     volumes:
       - ./certs:/certs
       - ./openldap_data:/bitnami/openldap
+      - ./ldap_server/ldapmodify.sh:/ldapmodify.sh
     networks:
       default:
         aliases:
           - openldap.example.org
+    # command: "/ldapmodify.sh && /opt/bitnami/scripts/openldap/run.sh"
 
   phpldapadmin:
     image: osixia/phpldapadmin:latest
@@ -54,7 +56,7 @@ services:
 
   mysql:
     image: mariadb:latest
-    restart: always
+    container_name: mysql
     ports:
       - 3306:3306
     environment:
@@ -71,6 +73,7 @@ services:
 
   mysql_gui:
     image: adminer:latest
+    container_name: mysql_gui
     restart: always
     ports:
       - 8080:8080
@@ -78,6 +81,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    container_name: grafana
     ports:
       - 3000:3000
     restart: unless-stopped
@@ -87,7 +91,7 @@ services:
 
 
   client:
-    image: kevinsawade/ldap-client
+    image: ldap-client
     container_name: client
     domainname: example.org
     hostname: client.example.org
@@ -107,90 +111,58 @@ services:
     volumes:
       - "./nfs_mount:/home"
 
-  # build the base image with munge
-  slurm_base:
-    image: kevinsawade/slurm-base
-    container_name: slurm_base
-    build:
-      context: .
-      dockerfile: slurm_base/Dockerfile
-    command: echo "Build successfull. I will close now."
 
-
-  slurm-db:
+  slurm_db:
     build:
       context: .
       dockerfile: slurm_db/Dockerfile
-    image: kevinsawade/slurm_db
-    hostname: slurm-database.local.dev
+    image: slurm-db
+    container_name: slurm_db
+    hostname: slurm-database.example.org
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
     depends_on:
       - mysql
-      - slurm_base
     networks:
       default:
         aliases:
           - slurm-db.example.org
 
 
-  # slurm_master:
-  #   image: kevinsawade/slurm-master
-  #   container_name: slurm_master
-  #   domainname: example.org
-  #   hostname: slurm_master
-  #   ports:
-  #     - 222:22
-  #   build:
-  #     context: .
-  #     dockerfile: slurm_master/Dockerfile
-  #     args:
-  #        - SLURM_VERSION=22.05.8
-  #   environment:
-  #     - LDAP_ADMIN_PASSWORD=adminpassword
-  #   depends_on:
-  #     - slurm_base
-  #   networks:
-  #     default:
-  #       aliases:
-  #         - slurm_master.example.org
-  #   volumes:
-  #     - "./nfs_mount:/home"
+  slurm_master:
+    image: slurm-master
+    container_name: slurm_master
+    domainname: example.org
+    hostname: slurm-master.example.org
+    build:
+      context: .
+      dockerfile: slurm_master/Dockerfile
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
+    networks:
+      default:
+        aliases:
+          - slurm-master.example.org
+    volumes:
+      - "./nfs_mount:/home"
 
 
-  # nfs2:
-  #   image: kevinsawade/nfs-server
-  #   build:
-  #     context: .
-  #     dockerfile: nfs_server/Dockerfile
-  #   container_name: nfs-server-2
-  #   domainname: example.org
-  #   hostname: nfs2.example.org
-  #   privileged: true
-  #   cap_add:
-  #     - CAP_SYS_ADMIN
-  #   ports:
-  #     - 2049:2049
-  #   networks:
-  #     default:
-  #       aliases:
-  #         - nfs2.example.org
+  c1:
+    image: slurm-node
+    container_name: c1
+    domainname: example.org
+    hostname: c1.example.org
+    ports:
+      - 222:22
+    build:
+      context: .
+      dockerfile: slurm_node/Dockerfile
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
+    networks:
+      default:
+        aliases:
+          - c1.example.org
+    volumes:
+      - "./nfs_mount:/home"
 
-  # nfs:
-  #   image: erichough/nfs-server:latest
-  #   container_name: nfs-server
-  #   domainname: example.org
-  #   hostname: nfs.example.org
-  #   privileged: true
-  #   cap_add:
-  #     - CAP_SYS_ADMIN
-  #   ports:
-  #     - 2050:2049
-  #   environment:
-  #     - SHARED_DIRECTORY=/data
-  #   networks:
-  #     default:
-  #       aliases:
-  #         - nfs.example.org
-  #   volumes:
-  #     - "./nfs_mount:/home"
-  #     - "./nfs_mount:/nfs"
-  #     - "./nfs_server/exports:/etc/exports:ro"

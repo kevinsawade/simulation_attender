@@ -1,22 +1,5 @@
-FROM kevinsawade/slurm-base
+FROM slurm-base
 MAINTAINER kevinsawade
-
-# install slurm-required packages
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
-RUN apt-get install -y \
-    rpm \
-    numactl \
-    hwloc \
-    lua5.3 \
-    lua5.3-dev \
-    lua5.3-filesystem \
-    lua5.3-posix \
-    man2html \
-    libibmad-dev \
-    libibumad-dev \
-    slurmdbd \
-    make \
-    mysql-client
 
 # fix permissions on slurm stuff
 RUN mkdir -p /etc/slurm-llnl
@@ -36,7 +19,6 @@ RUN mkdir -p /var/log/slurm
 RUN chown slurm: /var/spool/slurm/d
 RUN chown slurm: /var/log/slurm
 RUN mkdir -p /var/spool/slurmd
-COPY slurm_base/slurmdbd.conf /etc/slurm-llnl/slurmdbd.conf
 
 # set up slurmctld
 RUN mkdir /var/spool/slurmctld
@@ -46,8 +28,12 @@ RUN mkdir -p /var/log/slurm
 RUN touch /var/log/slurm/slurmctld.log
 RUN touch /var/log/slurm/slurm_jobacct.log /var/log/slurm/slurm_jobcomp.log
 RUN chown -R slurm: /var/log/slurm/
-COPY slurm_base/slurm.conf /etc/slurm-llnl/slurm.conf
-COPY slurm_base/cgroup.conf /etc/slurm-llnl/cgroup.conf
+RUN mkdir -p /var/run/slurm
+RUN chown slurm: /var/run/slurm
+RUN mkdir -p /etc/slurm
+RUN chown slurm:slurm /etc/slurm
+COPY slurm_base/slurm.conf /etc/slurm/slurm.conf
+COPY slurm_base/cgroup.conf /etc/slurm/cgroup.conf
 
 
 # ENV USE_SLURMDBD=true \
@@ -59,9 +45,15 @@ COPY slurm_base/cgroup.conf /etc/slurm-llnl/cgroup.conf
 #   ACCOUNTING_STORAGE_PORT=6819 \
 #   PARTITION_NAME=docker
 
+# copy the database conf
+COPY slurm_db/slurmdbd.conf /etc/slurm/slurmdbd.conf
+RUN chmod 600 /etc/slurm/slurmdbd.conf
+RUN chown -R slurm: /etc/slurm/
+
 # run the entrypoint
 COPY slurm_db/slurm_db_entrypoint.sh slurm_db_entrypoint.sh
 RUN chmod a+wrx slurm_db_entrypoint.sh
 COPY slurm_db/slurm_acct_db.sql slurm_acct_db.sql
 RUN chmod a+wrx slurm_acct_db.sql
+EXPOSE 6817 6818 6819
 CMD ["/slurm_db_entrypoint.sh"]

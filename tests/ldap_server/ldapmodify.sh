@@ -1,6 +1,6 @@
 ldapmodify -Y EXTERNAL <<EOF
-dn: uid=user01,ou=People,dc=directory,dc=nh
+dn: cn=user01,ou=users,dc=example,dc=org
 changetype: modify
 replace: loginShell
-loginShell: /bin/zsh
+loginShell: /bin/bash
 EOF

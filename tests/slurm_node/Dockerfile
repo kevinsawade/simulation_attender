@@ -17,9 +17,8 @@ FROM slurm-base
 COPY slurm_base/slurm.conf /etc/slurm/slurm.conf
 COPY slurm_base/cgroup.conf /etc/slurm/cgroup.conf
 
-# 6819
 # run the entrypoint
-COPY slurm_master/slurm_master_entrypoint.sh slurm_master_entrypoint.sh
-RUN chmod a+wrx slurm_master_entrypoint.sh
+COPY slurm_node/slurm_node_entrypoint.sh slurm_node_entrypoint.sh
+RUN chmod a+wrx slurm_node_entrypoint.sh
 EXPOSE 6817 6818 6819
-CMD ["/slurm_master_entrypoint.sh"]
+CMD ["/slurm_node_entrypoint.sh"]

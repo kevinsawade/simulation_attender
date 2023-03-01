@@ -3,30 +3,34 @@
 # turn on bash's job control
 set -m
 
+# write the password
+echo $LDAP_ADMIN_PASSWORD > /etc/ldap.secret
+echo $LDAP_ADMIN_PASSWORD > /etc/pam_ldap.secret
+echo $LDAP_ADMIN_PASSWORD > /etc/libnss-ldap.secret
+unset LDAP_ADMIN_PASSWORD
+
+# wait for the nodes to spin up and create passwordless ssh
+/wait-for-it.sh openldap:636 --strict -- echo "openldap.local.dev 636 is up" && /etc/init.d/ssh start && /etc/init.d/nscd restart && /etc/init.d/nslcd restart
+
 # bring up sshd
 /usr/sbin/sshd
 
 # print uid
 id
 
+# fix the slurm config
+sed -i "s/REPLACE_IT/CPUs=$(nproc)/g" /etc/slurm/slurm.conf
+
+# start the munge daemon
+gosu munge service munge start
+
+
 # wait for the sql-server to be available and add slurm to the database
 MYSQL_ROOT_PASSWORD=sql_root_passw0rd
-/wait-for-it.sh db.example.org:3306 --strict -- echo "db.example.org db(3306) is up" ; mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD < /slurm_acct_db.sql
-  
-# start the munge daeomon
-# sudo -u munge service munge start
-# su -u munge /sbin/munged
-# munge -n
-# munge -n | unmunge
-# remunge
+/wait-for-it.sh db.example.org:3306 --strict -- echo "db.example.org db(3306) is up"
+echo "SELECT 1" | mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD
+mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD < /slurm_acct_db.sql
 
-# start the slurmdb daemon
-# sudo -u slurm service slurmdbd start
-
-# now we bring the primary process back into the foreground
-# and leave it there
-# use the forgrounding of a process, if the process docker is running doesn't automatically terminate (i.e. webserver)
-# fg %1
-
-# use this, if the docker container automatically terminates, but you want to keep it running
-tail -f /dev/null
+# start the slurm databse
+exec gosu slurm /usr/sbin/slurmdbd -Dvvv
+# tail -f /dev/null
