@@ -2,6 +2,10 @@
 
 These tests build a complete HPC network with SLURM/LDAP/SSH/ENVIRONMENT MODULES
 
+## How to start the tests
+
+Under perfect conditions, everything should be able to run using the `start_slurm.sh` script. It will build the images sequentially to allow the `FROM` inheritance/ Then `docker compose up` will start the whole cluster and whatnot.
+
 ## Important stuff at the start
 
 The nfs docker also needs the nfs kernel module. Do

@@ -13,3 +13,4 @@
 !slurm_db/slurm_acct_db.sql
 !slurm_master/slurm_master_entrypoint.sh
 !slurm_node/slurm_node_entrypoint.sh
+!slurm_base/cgroup_allowed_devices_file.conf

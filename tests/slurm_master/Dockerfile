@@ -16,6 +16,7 @@ FROM slurm-base
 # RUN chown slurm:slurm /etc/slurm
 COPY slurm_base/slurm.conf /etc/slurm/slurm.conf
 COPY slurm_base/cgroup.conf /etc/slurm/cgroup.conf
+COPY slurm_base/cgroup_allowed_devices_file.conf /etc/slurm/cgroup_allowed_devices_file.conf
 
 # 6819
 # run the entrypoint
