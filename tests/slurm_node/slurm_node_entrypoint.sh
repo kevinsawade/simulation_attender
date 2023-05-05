@@ -25,8 +25,8 @@ gosu munge service munge start
 sed -i "s/REPLACE_IT/CPUs=$(nproc)/g" /etc/slurm/slurm.conf
 
 # wait for the slurm master to become active
-/wait-for-it.sh slurm-master.example.org:6817 --strict -- echo "slurm-master.example.org 6817 is up"
-# exec /usr/sbin/slurmd -Dvvv
+/wait-for-it.sh slurm-master.example.org:6817 --timeout=100 --strict -- echo "slurm-master.example.org 6817 is up"
+exec gosu root /usr/sbin/slurmd -Dvvv
 
 # use this, if the docker container automatically terminates, but you want to keep it running
 tail -f /dev/null

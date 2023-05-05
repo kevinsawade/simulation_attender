@@ -14,12 +14,14 @@ The nfs docker also needs the nfs kernel module. Do
 sudo modprobe {nfs,nfsd,rpcsec_gss_krb5}
 ```
 
+to check, whether nfs is enabled in your kernel. If no error is raised, nfs is enabled in your kernel.
+
 ## Quickstart
 
 Start the container network with
 
 ```bash
-$ docker compose up --build
+$ bash start_slurm.sh
 ```
 
 ssh into the client machine

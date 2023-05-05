@@ -25,12 +25,12 @@ gosu munge service munge start
 sed -i "s/REPLACE_IT/CPUs=$(nproc)/g" /etc/slurm/slurm.conf
 
 # wait for the slurmdb to become active
-/wait-for-it.sh slurm-db.example.org:6817 --strict -- echo "slurm-db.example.org 6817 is up"
+/wait-for-it.sh slurm-database.example.org:6819 --timeout=60 --strict -- echo "slurm-database.example.org 6819 is up"
 
 # start the slurm control daemons
-/usr/bin/sacctmgr --immediate add cluster name=cluster
+gosu root /usr/bin/sacctmgr --immediate add cluster name=linux
 sleep 2s
-exec gosu slurm /usr/sbin/slurmctld -Dvvv
+gosu root /usr/sbin/slurmctld -Dvvv
 # /wait-for-it.sh slurm-node1.local.dev:6818 --strict -- service slurmctld start
 
 # use this, if the docker container automatically terminates, but you want to keep it running

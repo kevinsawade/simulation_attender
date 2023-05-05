@@ -27,7 +27,7 @@ gosu munge service munge start
 
 # wait for the sql-server to be available and add slurm to the database
 MYSQL_ROOT_PASSWORD=sql_root_passw0rd
-/wait-for-it.sh db.example.org:3306 --strict -- echo "db.example.org db(3306) is up"
+/wait-for-it.sh db.example.org:3306 --timeout=30 --strict -- echo "db.example.org db(3306) is up"
 echo "SELECT 1" | mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD
 mysql -h db.example.org -u root -p$MYSQL_ROOT_PASSWORD < /slurm_acct_db.sql
 

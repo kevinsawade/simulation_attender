@@ -126,7 +126,7 @@ services:
     networks:
       default:
         aliases:
-          - slurm-db.example.org
+          - slurm-database.example.org
 
 
   slurm_master:
@@ -139,21 +139,21 @@ services:
       dockerfile: slurm_master/Dockerfile
     environment:
       - LDAP_ADMIN_PASSWORD=adminpassword
+    ports:
+      - 222:22
     networks:
       default:
         aliases:
           - slurm-master.example.org
     volumes:
       - "./nfs_mount:/home"
-
+      - "./work:/work"
 
   c1:
     image: slurm-node
     container_name: c1
     domainname: example.org
     hostname: c1.example.org
-    ports:
-      - 222:22
     build:
       context: .
       dockerfile: slurm_node/Dockerfile
@@ -165,4 +165,23 @@ services:
           - c1.example.org
     volumes:
       - "./nfs_mount:/home"
+      - "./work:/work"
+
+  c2:
+    image: slurm-node
+    container_name: c2
+    domainname: example.org
+    hostname: c2.example.org
+    build:
+      context: .
+      dockerfile: slurm_node/Dockerfile
+    environment:
+      - LDAP_ADMIN_PASSWORD=adminpassword
+    networks:
+      default:
+        aliases:
+          - c2.example.org
+    volumes:
+      - "./nfs_mount:/home"
+      - "./work:/work"
 

@@ -1,31 +1,37 @@
 #!/bin/bash
 
+. sh_libs/liblog.sh
+
 # exit on error
 set -e
 
 # check for persistent directories and access rights
 SHOULD_EXIT=0
 if [ ! -d openldap_data ] ; then
-	echo -e "Run this command to make a persistent directory for the openldap server:\nmkdir -p openldap_data"
+	info "Run this command to make a persistent directory for the openldap server:\n$ mkdir -p openldap_data"
 	SHOULD_EXIT=1
 fi
 if [ ! -d nfs_mount ] ; then
-	echo -e "Run this command to make a persistent directory for the home folder in the slurm nodes:\nmkdir -p nfs_mount"
+	info "Run this command to make a persistent directory for the home folder in the slurm nodes:\n$ mkdir -p nfs_mount"
+	SHOULD_EXIT=1
+fi
+if [ ! -d work ] ; then
+	info "Run this command to make a persistent directory for the home folder in the slurm nodes:\n$ mkdir -p work"
 	SHOULD_EXIT=1
 fi
 openldap_access_rights=$( ls -ald openldap_data | awk '{print $1'} )
 certs_access_rights=$( ls -ald certs | awk '{print $1'} )
 if [ $openldap_access_rights != drwxrwxrwx ] ; then
 	SHOULD_EXIT=1
-	echo -e "Until I figure out how to make the openldap container use the files in openldap_data/ without this command, you need to run this as sudo:\nsudo chmod -R ugo+rwx openldap_data"
+	error "Until I figure out how to make the openldap container use the files in openldap_data/ without this command, you need to run this as sudo:\n$ sudo chmod -R ugo+rwx openldap_data"
 fi
 if [ $certs_access_rights != drwxrwxrwx ] ; then
 	SHOULD_EXIT=1
-	echo -e "Until I figure out how to make the openldap container use the files in certs/ without this command, you need to run this as sudo:\nsudo chmod -R ugo+rwx certs"
+	error "Until I figure out how to make the openldap container use the files in certs/ without this command, you need to run this as sudo:\n$ sudo chmod -R ugo+rwx certs"
 fi
 
 if [ ! $SHOULD_EXIT -eq 0 ] ; then
-	echo "Follow the instructions and then start the script again."
+	error "Follow the instructions and then start the script again."
 	exit
 fi
 
