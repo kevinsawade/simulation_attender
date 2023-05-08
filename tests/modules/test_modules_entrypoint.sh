@@ -11,4 +11,3 @@ info "Running a test docker container with environment-modules installed."
 info "Sourcing /usr/share/Modules/init/profile.sh"
 source /usr/share/Modules/init/profile.sh
 info "Finished. Happy Testing"
-module load gromacs/2023.1

@@ -1,0 +1,15 @@
+pytest
+coverage
+pytest-docker-compose
+pytest-cov
+hypothesis
+mdtraj
+vulture
+flake8
+black
+isort
+pdoc3
+numpy
+jinja2
+click
+pandas

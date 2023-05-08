@@ -85,7 +85,7 @@ RUN set -ex \
     && make check \
     && make install
 RUN mkdir -p /etc/modulefiles/gromacs
-COPY gromacs_modulefile /etc/modulefiles/gromacs/$GMX_VERSION
+COPY modules/gromacs_modulefile /etc/modulefiles/gromacs/$GMX_VERSION
 RUN sed -i "s/GMX_VERSION/$GMX_VERSION/g" /etc/modulefiles/gromacs/$GMX_VERSION
 
 #####################
@@ -93,7 +93,7 @@ RUN sed -i "s/GMX_VERSION/$GMX_VERSION/g" /etc/modulefiles/gromacs/$GMX_VERSION
 #####################
 
 RUN mkdir -p /sh_libs
-COPY liblog.sh /sh_libs/liblog.sh
+COPY sh_libs/liblog.sh /sh_libs/liblog.sh
 
 #####################
 # ENTRYPOINT
@@ -104,7 +104,3 @@ ENV TINI_VERSION v0.19.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod a+rx /tini
 ENTRYPOINT ["/tini", "--"]
-
-COPY test_modules_entrypoint.sh /test_modules_entrypoint.sh
-RUN chmod a+wrx /test_modules_entrypoint.sh
-CMD ["/test_modules_entrypoint.sh"]

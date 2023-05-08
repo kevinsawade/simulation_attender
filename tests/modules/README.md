@@ -1,8 +1,28 @@
 # Environment modules in docker
 
-This is a testing docker container for testing how to set up environment modules in a docker container.
+This docker-container is used as a base for a container with environment-modules installed in it. The modules command needs to be sourced first with
 
-## Changes to the slurm_base packages
-- apt install tcl tcl8.6-dev tk expect tclsh
-- use ARG $ENVIRONMENT_MODULES_VERSION
-- follow the installation instructions
+```bash
+$ source /usr/share/Modules/init/profile.sh
+```
+
+Gromacs is then available as a module with:
+
+```bash
+module load gromacs/2023.1
+```
+
+## Build args
+
+This container supports various build args:
+
+- GOSU_VERSION (standard 1.11)
+- ENVIRONMENT_MODULES_VERSION (standard 5.2.0)
+- CMAKE_VERSION (standard 3.26.3)
+- GMX_VERSION (standard 2023.1)
+
+Set them when building with:
+
+```bash
+$ docker build --build-arg ENVIRONMENT_MODULES_VERSION="5.2.0" .
+```

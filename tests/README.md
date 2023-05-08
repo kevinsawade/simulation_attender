@@ -4,7 +4,11 @@ These tests build a complete HPC network with SLURM/LDAP/SSH/ENVIRONMENT MODULES
 
 ## How to start the tests
 
-Under perfect conditions, everything should be able to run using the `start_slurm.sh` script. It will build the images sequentially to allow the `FROM` inheritance/ Then `docker compose up` will start the whole cluster and whatnot.
+```bash
+$ bash test_simulation_attender.py
+```
+
+Under perfect conditions, the tests should start using the `test_simulation_attender.sh` script. This script will build and spool up a plethora of docker containers using the `start_slurm.sh` script. Then it will execute `pytest test_simulation_attender.py` inside one of the nodes in the slurm cluster.
 
 ## Important stuff at the start
 

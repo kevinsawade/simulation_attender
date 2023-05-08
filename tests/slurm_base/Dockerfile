@@ -1,6 +1,4 @@
 FROM ldap-client
-ARG SLURM_VERSION=slurm-22-05-8-1
-ARG GOSU_VERSION=1.11
 
 #####################
 # NEEDED PACKAGES
@@ -28,22 +26,10 @@ RUN apt-get update && apt-get install -y \
 RUN pip3 install Cython nose
 
 #####################
-# GOSU
-#####################
-RUN set -ex \
-    && wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64" \
-    && wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-amd64.asc" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu \
-    && rm -rf "${GNUPGHOME}" /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu \
-    && gosu nobody true
-
-#####################
 # SLURM
 #####################
 # Install slurm
+ARG SLURM_VERSION=slurm-22-05-8-1
 RUN mkdir -p /slurm_install
 RUN set -x \
     && git clone -b ${SLURM_VERSION} --single-branch --depth=1 https://github.com/SchedMD/slurm.git /slurm_install/slurm \

@@ -36,12 +36,18 @@ if [ ! $SHOULD_EXIT -eq 0 ] ; then
 fi
 
 # build containers
+docker build -t modules-gmx-base -f modules/Dockerfile \
+  --build-arg GOSU_VERSION="1.11" \
+  --build-arg ENVIRONMENT_MODULES_VERSION="5.2.0" \
+  --build-arg GMX_VERSION="2023.1" \
+  --build-arg CMAKE_VERSION="3.26.3" .
 docker build -t ldap-client -f ldap_client/Dockerfile .
 docker build -t slurm-base --build-arg SLURM_VERSION="slurm-22-05-8-1" -f slurm_base/Dockerfile .
 docker build -t slurm-db -f slurm_db/Dockerfile .
 docker build -t slurm-master -f slurm_master/Dockerfile .
 docker build -t slurm-node -f slurm_node/Dockerfile .
+docker build -t run-tests .
 
 # start the swarm
 docker compose build
-docker compose up
+docker compose up -d

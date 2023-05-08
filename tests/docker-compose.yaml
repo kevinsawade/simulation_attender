@@ -150,13 +150,13 @@ services:
       - "./work:/work"
 
   c1:
-    image: slurm-node
+    image: run-tests
     container_name: c1
     domainname: example.org
     hostname: c1.example.org
     build:
       context: .
-      dockerfile: slurm_node/Dockerfile
+      dockerfile: Dockerfile
     environment:
       - LDAP_ADMIN_PASSWORD=adminpassword
     networks:
@@ -167,21 +167,21 @@ services:
       - "./nfs_mount:/home"
       - "./work:/work"
 
-  c2:
-    image: slurm-node
-    container_name: c2
-    domainname: example.org
-    hostname: c2.example.org
-    build:
-      context: .
-      dockerfile: slurm_node/Dockerfile
-    environment:
-      - LDAP_ADMIN_PASSWORD=adminpassword
-    networks:
-      default:
-        aliases:
-          - c2.example.org
-    volumes:
-      - "./nfs_mount:/home"
-      - "./work:/work"
+#  c2:
+#    image: slurm-node
+#    container_name: c2
+#    domainname: example.org
+#    hostname: c2.example.org
+#    build:
+#      context: .
+#      dockerfile: slurm_node/Dockerfile
+#    environment:
+#      - LDAP_ADMIN_PASSWORD=adminpassword
+#    networks:
+#      default:
+#        aliases:
+#          - c2.example.org
+#    volumes:
+#      - "./nfs_mount:/home"
+#      - "./work:/work"
 

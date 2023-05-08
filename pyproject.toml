@@ -1,0 +1,6 @@
+# pytest
+[tool.pytest.ini_options]
+testpaths = ["tests/test_simulation_attender.py"]
+pytest_plugins = ["docker_compose"]
+addopts = "--docker-compose=tests/docker-compose.yaml"
+# addopts = "--cov=cleanup_sims --cov-report=html --html=docs/build/static/html_report.html --self-contained-html"

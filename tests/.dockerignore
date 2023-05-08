@@ -14,3 +14,10 @@
 !slurm_master/slurm_master_entrypoint.sh
 !slurm_node/slurm_node_entrypoint.sh
 !slurm_base/cgroup_allowed_devices_file.conf
+!modules/gromacs_modulefile
+!sh_libs/*
+!requirements.txt
+!test_in_docker.sh
+!test_simulation_attender.py
+!water_simulation/production.tpr
+!simulation_attender.py
