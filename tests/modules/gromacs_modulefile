@@ -1,0 +1,11 @@
+#%Module
+
+proc ModulesHelp { } {
+   puts stderr "This module loads GROMACS version GMX_VERSION"
+}
+
+module-whatis "This module loads GROMACS version GMX_VERSION\n"
+
+set basedir "/etc/modulefiles/gromacs/GMX_VERSION"
+prepend-path PATH "${basedir}/bin"
+prepend-path LD_LIBRARY_PATH "${basedir}/lib64"

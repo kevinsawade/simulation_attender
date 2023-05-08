@@ -1,1 +1,0 @@
-docker build -t modules-test --build-arg GOSU_VERSION="5.2.0" .
