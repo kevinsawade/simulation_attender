@@ -186,3 +186,4 @@ fabric.properties
 tests/simulation_attender.py
 tests/work*
 tests/sims.h5
+*job.sh

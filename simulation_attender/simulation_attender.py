@@ -46,6 +46,25 @@ warnings.simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 __version__ = "0.0.1"
 
 
+__all__ = ["cli", "get_db"]
+
+
+JOB_TEMPLATE="""\
+#!/bin/bash
+#SBATCH --chdir={{ directory }}
+#SBATCH --export=NONE
+#SBATCH --mail-user={{ email }}
+#SBATCH --mail-type=BEGIN,END
+
+{{ module_loads }}
+
+cd {{ directory }}
+
+{{ command }}
+
+"""
+
+
 ################################################################################
 # Helper Classes
 ################################################################################
@@ -53,11 +72,12 @@ __version__ = "0.0.1"
 
 @total_ordering
 class SimState(Enum):
-    ENQUEUED = 0
-    TEMPLATED = 1
+    CRASHED = -2
+    SETUP = -1
+    TEMPLATED = 0
+    ENQUEUED = 1
     RUNNING = 2
     FINISHED = 3
-    CRASHED = -1
 
     def __str__(self):
         return self.name
@@ -93,17 +113,12 @@ class LocalFile(type(Path())):
     def __init__(
         self,
         *pathsegments,
-        sim_hash=None,
-        notes=None,
-        parent_sim=None,
-        stdout="",
-        stderr="",
+        db_file: Optional[Path] = None,
+        sim_hash: Optional[str] = None,
     ):
         self.instantiation_time = datetime.now()
-        self.stdout = stdout
-        self.stderr = stderr
+        self.db_file = db_file
         self.sim_hash = sim_hash
-        self.parent_sim = parent_sim
 
         # some checks
         if not self.exists():
@@ -133,18 +148,31 @@ class LocalFile(type(Path())):
             )
 
         # check database for duplicate
-        if self.in_database:
-            if self.hash != self.df["hash"]:
-                raise Exception(
-                    f"File {self} has changed on disk since last "
-                    f"checking on {self.df['last_checked_time']}. Use the "
-                    f"parent simulation {self.df['sim_hash']} to update "
-                    f"this file. Use `rr.Simulation.from_database("
-                    f"{self.df['sim_hash']})` to reload this sim."
-                )
-            else:
-                self.sim_hash = self.df["sim_hash"]
+        if self.db_file is not None:
+            if self.in_database:
+                files, _ = get_db(self.db_file)
+                if self.hash != files.loc[str(self)]["hash"]:
+                    raise Exception(
+                        f"File {self} has changed on disk since last "
+                        f"checking on {self.df['last_checked_time']}. Use the "
+                        f"parent simulation {self.df['sim_hash']} to update "
+                        f"this file. Use `rr.Simulation.from_database("
+                        f"{self.df['sim_hash']})` to reload this sim."
+                    )
+                else:
+                    sim_hash = files.loc[str(self)]["sim_hash"]
+                    if sim_hash != self.sim_hash:
+                        raise Exception(f"This file was associated with a different sim: "
+                                        f"{sim_hash[:7]}. Please use this sim to manipulate "
+                                        f"this file")
+                    self.sim_hash = sim_hash
         super().__init__()
+
+    @classmethod
+    def from_series(cls, series: pd.Series, db_file:Path):
+        new_class = cls(series.name, db_file=db_file, sim_hash=series["sim_hash"])
+        new_class.instantiation_time = series["time_added"]
+        return new_class
 
     @property
     def hash(self):
@@ -152,13 +180,10 @@ class LocalFile(type(Path())):
 
     @property
     def in_database(self):
-        return False
-        # return file_in_db(self)
-
-    @property
-    def df(self):
-        return pd.Series({"hash": "123"})
-        # return series_from_filename(str(self))
+        if self.db_file is None:
+            raise Exception("Set the `db_file` attribute of this file to check.")
+        files, _ = get_db(self.db_file)
+        return str(self) in files.index
 
     def to_database(self):
         if self.sim_hash is None:
@@ -166,8 +191,18 @@ class LocalFile(type(Path())):
                 "This file is not associated to a simulation and thus "
                 "can't be pushed to the database."
             )
-        self.last_checked_time = get_iso8601_datetime()
-        add_file_to_db(self)
+        files, sims = get_db(self.db_file)
+        series = pd.Series(
+            {
+                "hash": self.hash,
+                "time_added": self.instantiation_time,
+                "time_last_checked": datetime.now(),
+                "sim_hash": self.sim_hash
+            }
+        )
+        series.name = str(self)
+        files.at[str(self)] = series
+        store_dfs_to_hdf5(self.db_file, files, sims)
 
     def rename(self, target, backup=False):
         self_basedir = self.parent
@@ -228,9 +263,10 @@ class Simulation:
     def __init__(
         self,
         tpr_file: Path,
-        state: str = "ENQUEUED",
+        db_file: Path,
+        state: str = "SETUP",
         instantiation_time: Optional[datetime] = None,
-        jobids: Optional[list[int]] = None,
+        job_ids: Optional[list[int]] = None,
     ) -> None:
         self.tpr_file = tpr_file
         self.state = SimState[state]
@@ -238,21 +274,23 @@ class Simulation:
             self.instantiation_time = datetime.now()
         else:
             self.instantiation_time = instantiation_time
-        if jobids is None:
-            self.jobids = []
+        if job_ids is None:
+            self.job_ids = []
         else:
-            self.jobids = jobids
+            self.job_ids = job_ids
+        self.db_file = db_file
 
     @classmethod
     def from_hash(cls, hash: str, db_file: Path):
         _, sims = get_db(db_file)
         series = sims.loc[hash]
-        return cls.from_series(series)
+        return cls.from_series(series, db_file)
 
     @classmethod
-    def from_series(cls, series: pd.Series):
+    def from_series(cls, series: pd.Series, db_file: Path):
         return cls(
             Path(series["tpr_file"]),
+            db_file,
             series["state"],
             series["time_added"],
             [int(i) for i in series["jobids"].split(", ")] if series["jobids"] != "" else None,
@@ -262,24 +300,25 @@ class Simulation:
     def directory(self) -> Path:
         return self.tpr_file.parent
 
-    def in_database(self, db_file: Path) -> bool:
-        _, sims = get_db(db_file)
+    @property
+    def in_database(self) -> bool:
+        _, sims = get_db(self.db_file)
         return self.hash in sims.index
 
-    def to_database(self, db_file: Path) -> None:
-        files, sims = get_db(db_file)
+    def to_database(self) -> None:
+        files, sims = get_db(self.db_file)
         series = pd.Series(
             {
                 "tpr_file": str(self.tpr_file),
                 "time_added": self.instantiation_time,
                 "time_last_checked": datetime.now(),
                 "state": str(self.state),
-                "jobids": ", ".join(self.jobids),
+                "jobids": ", ".join(self.job_ids),
             }
         )
         series.name = self.hash
         sims.at[self.hash] = series
-        store_dfs_to_hdf5(db_file, files, sims)
+        store_dfs_to_hdf5(self.db_file, files, sims)
 
     @property
     def hash(self) -> str:
@@ -289,8 +328,14 @@ class Simulation:
     def id(self) -> str:
         return self.hash[:7]
 
-    def files(self, db_file: str) -> list[LocalFile]:
-        files, _ = get_db()
+    @property
+    def files(self) -> list[LocalFile]:
+        files, _ = get_db(self.db_file)
+        files_out = []
+        for i, row in files[files["sim_hash"] == self.hash].iterrows():
+            file = LocalFile.from_series(row, self.db_file)
+            files_out.append(file)
+        return files_out
 
     def __str__(self):
         return (
@@ -351,6 +396,7 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
                 "sim_hash": str,
             }
         )
+        files = files.set_index("file")
         sims = pd.DataFrame(
             {
                 "tpr_file": [],
@@ -411,7 +457,7 @@ def cli(
 
 @click.argument(
     "identifier",
-    required=True,
+    required=False,
     nargs=-1,
     type=click.UNPROCESSED,
 )
@@ -428,14 +474,80 @@ def cli(
     type=str,
     help="The database file to read or create",
 )
-@cli.command(name="list", help="List simulations in the database.")
+@cli.command(name="files", help="List files in the database.")
+@click.pass_context
+def list_files(
+        ctx: click.Context,
+        identifier: Optional[list[str]] = None,
+        n: str = "10",
+        db_file: Path = Path("sims.h5"),
+) -> pd.DataFrame:
+    if not identifier:
+        identifier = ("today", )
+    db_file = Path(db_file)
+    files, _ = get_db(db_file)
+    identifier = " ".join(identifier)
+    if identifier == "tail":
+        files = files.tail(int(n))
+    elif identifier == "head":
+        files = files.head(int(n))
+    elif identifier in files.index.str[:7]:
+        pass
+    else:
+        try:
+            identifier = magicdate.magicdate(identifier)
+            if isinstance(identifier, date):
+                identifier = datetime.combine(identifier, datetime.min.time())
+            files = files[files["time_added"] > identifier]
+        except:
+            click.echo(
+                f"simulation_attender.py list can take IDENTIFIER arguments like: "
+                f"'tail -n 20', or 'today', or '1 week ago'. The argument "
+                f"you provided '{identifier}' could not be understood."
+            )
+            return pd.DataFrame({})
+    prettify(files)
+
+
+@click.argument(
+    "identifier",
+    required=False,
+    nargs=-1,
+    type=click.UNPROCESSED,
+)
+@click.option(
+    "-n",
+    required=False,
+    default="10",
+)
+@click.option(
+    "-db",
+    "--database-file",
+    "db_file",
+    default="sims.h5",
+    type=str,
+    help="The database file to read or create",
+)
+@cli.command(
+    name="list",
+    help="List simulations in the database.",
+    context_settings=dict(
+            ignore_unknown_options=True,
+            allow_extra_args=True,
+    )
+)
 @click.pass_context
 def list_sims(
     ctx: click.Context,
-    identifier: list[str],
+    identifier: Optional[list[str]] = None,
     n: str = "10",
     db_file: Path = Path("sims.h5"),
 ) -> pd.DataFrame:
+    if not identifier:
+        identifier = ("today", )
+    if identifier[0] == "slice":
+        n = "".join(identifier[1:])
+        identifier = ("slice", )
     return _list_sims(ctx, identifier, n, db_file, print_df=True)
 
 
@@ -457,7 +569,12 @@ def _list_sims(
         sims = sims.head(int(n))
         sims.index = sims.index.str[:7]
         sims.index.name = "id"
-    elif identifier in sims.index.str[:7]:
+    elif identifier == "slice":
+        ind = slice(*map(lambda x: int(x.strip()) if x.strip() else None, n.split(':')))
+        sims = sims.iloc[ind]
+        sims.index = sims.index.str[:7]
+        sims.index.name = "id"
+    elif identifier in sims.index.str[:7] or identifier in sims.index.str[:7]:
         sims.index = sims.index.str[:7]
     else:
         try:
@@ -519,8 +636,6 @@ def template(
     db_file: Path = Path("sims.h5"),
     template_file: str = "",
 ) -> int:
-    identifier = ["today"] if identifier is None else identifier
-
     # filter list arg
     extra_args = {
         k: v for k, v in zip(identifier[:-1], identifier[1:]) if k.startswith("--")
@@ -530,10 +645,11 @@ def template(
         for k, v in zip(identifier[:-1], identifier[1:])
         if k.startswith("-") and not k.startswith("--")
     }
-    click.echo(
-        f"Dropping these args, because templating args need two hypens (e.g. '--cmd'):\n"
-        f"{dropping_args}"
-    )
+    if dropping_args:
+        click.echo(
+            f"Dropping these args, because templating args need two hypens (e.g. '--cmd'):\n"
+            f"{dropping_args}"
+        )
     args_to_delete = (
         list(extra_args.keys())
         + list(extra_args.values())
@@ -542,6 +658,7 @@ def template(
     )
     identifier = tuple(filter(lambda x: x not in args_to_delete, identifier))
     extra_args = {k.lstrip("-"): v for k, v in extra_args.items()}
+    identifier = ("today",) if not identifier else identifier
 
     # get sims to template
     sims_to_template = _list_sims(ctx, identifier, n, db_file, print_df=False)
@@ -553,11 +670,32 @@ def template(
         )
         return 1
 
+    # prepare the template
+    if not template_file:
+        template = jinja2.Template(JOB_TEMPLATE, undefined=jinja2.StrictUndefined)
+    else:
+        template = jinja2.Template(Path(template_file).read_text(), undefined=jinja2.StrictUndefined)
+
     for i, row in sims_to_template.iterrows():
-        sim = Simulation.from_series(row)
-        print(sim)
-    click.echo(extra_args)
-    click.echo(ctx.args)
+        sim = Simulation.from_series(row, db_file)
+        if sim.state >= SimState.TEMPLATED:
+            continue
+
+        #  prepare the template dict
+        template_dict = {'directory': sim.directory.resolve()} | extra_args
+        if "email" not in template_dict:
+            template_dict["email"] = "no-one@example.com"
+        for key, val in template_dict.items():
+            if "{{ stem }}" in str(val):
+                template_dict[key] = val.replace("{{ stem }}", sim.tpr_file.stem)
+        rendered_text = template.render(template_dict)
+        job_file = Path(sim.directory) / "job.sh"
+        job_file.write_text(rendered_text)
+        job_file = LocalFile(job_file, db_file=db_file, sim_hash=sim.hash)
+        job_file.to_database()
+        sim.state = SimState["TEMPLATED"]
+        sim.to_database()
+
     return 0
 
 
@@ -593,22 +731,38 @@ def collect(
     start_dir = Path(start_dir).resolve()
     click.echo(f"Collecting simulations in {start_dir}")
     tpr_files = [LocalFile(f) for f in start_dir.rglob(f"**/{pattern}*tpr")]
+    click.echo(f"Found {len(tpr_files)} tpr files in {start_dir}")
 
     # track collected sims
     collected_sims = 0
 
     # iterate over tpr files and create simulation objects
     for tpr_file in tpr_files:
-        sim = Simulation(tpr_file)
-        if not sim.in_database(db_file):
-            sim.to_database(db_file)
+        sim = Simulation(tpr_file, db_file)
+        click.echo(f"{sim=} {sim.in_database=} {db_file=}")
+        if not sim.in_database:
+            sim.to_database()
+            tpr_file.sim_hash = sim.hash
+            tpr_file.db_file = db_file
+            tpr_file.to_database()
             collected_sims += 1
 
-    click.echo(f"Collected {collected_sims} new tpr files.")
+    if collected_sims > 0:
+        click.echo(f"Collected {collected_sims} new tpr files.")
+    else:
+        click.echo(f"There were no tpr files in the directory {start_dir}.")
 
     # files, sims = get_db(db_file)
     #     new_sims = pd.DataFrame({}, columns=files.columns)
     return 0
+
+
+@cli.command(help="Checks currently running sims and prints info about them.")
+@click.pass_context
+def check(
+        ctx: click.Context,
+) -> int:
+    raise NotImplementedError
 
 
 ################################################################################
