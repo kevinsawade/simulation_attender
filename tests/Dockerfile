@@ -17,5 +17,7 @@ RUN set -ex \
 #####################
 COPY simulation_attender.py /app/simulation_attender.py
 COPY test_in_docker.sh /app/test_in_docker.sh
+RUN mkdir -p /sh_libs
+COPY sh_libs/liblog.sh /sh_libs/liblog.sh
 COPY water_simulation/production.tpr /app/production.tpr
 COPY test_simulation_attender.py /app/test_simulation_attender.py

@@ -420,7 +420,7 @@ def _get_workload_manager() -> str:
               )
 @click.option('-m', '--module-loads', required=False, default=None, type=str,
               help=('The `module load` commands to set up the environment. '
-                    'Can be subbplied how many times you like for loading more modules. ')
+                    'Can be supplied how many times you like for loading more modules. ')
               )
 @click.option('-c', '--command', required=False, default=None, type=str,
               help="The command to execute via slurm, e.g. gmx mdrun -deffnm production.")

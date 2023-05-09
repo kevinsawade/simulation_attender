@@ -37,13 +37,17 @@ class TestSimAttender:
 
     def test_help_message(self):
         result = self.runner.invoke(cli, ["--help"])
-        assert "--help         Show this message and exit." in result.output, print(f"--help does not print a help message.")
+        assert "--help         Show this message and exit." in result.output, print(
+            f"--help does not print a help message.")
+        result = self.runner.invoke(cli, ["collect", "--help"])
+        assert "--help         Show this message and exit." in result.output, print(
+            f"collect --help does not print a help message.")
 
     def test_collect(self):
         shutil.copyfile(self.tpr_file, self.dir1 / "production.tpr")
         shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
         assert (self.dir1 / "production.tpr").is_file()
-        result =
+        result = None
         pass
 
     def test_assert_true(self):

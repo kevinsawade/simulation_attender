@@ -7,7 +7,7 @@ set -m
 . sh_libs/liblog.sh
 
 # print infos
-info "Welcome simulation_attender.py test suite."
+info "Welcome to the simulation_attender.py test suite."
 cp ../simulation_attender/simulation_attender.py simulation_attender.py
 info "Spooling up docker containers."
 info "For a first-time build, this can take up to a few hours. I need to compile cmake, environment-modules and gromacs from source."

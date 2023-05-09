@@ -3,7 +3,6 @@ coverage
 pytest-docker-compose
 pytest-cov
 hypothesis
-mdtraj
 vulture
 flake8
 black
@@ -14,3 +13,5 @@ jinja2
 click
 pandas
 imohash
+magicdate
+rich-dataframe

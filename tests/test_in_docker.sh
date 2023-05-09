@@ -8,6 +8,7 @@ set -m
 
 # loading gromacs
 info "Starting tests for simulation_attender.py"
+info "Staring general tests to ensure the environment is working."
 info "Sourcing environment modules"
 source /usr/share/Modules/init/profile.sh
 info "Loading gromacs module"

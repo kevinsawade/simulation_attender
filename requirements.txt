@@ -3,3 +3,5 @@ jinja2
 click
 pandas
 imohash
+magicdate
+rich-dataframe
