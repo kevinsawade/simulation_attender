@@ -2,16 +2,16 @@
 ;	File 'mdout.mdp' was generated
 ;	By user: kevin (1000028)
 ;	On host: pccp15
-;	At date: Mon May  8 16:24:57 2023
+;	At date: Wed May 10 18:16:11 2023
 ;
 ;	Created by:
-;	                     :-) GROMACS - gmx grompp, 2022.5 (-:
+;	                     :-) GROMACS - gmx grompp, 2022.3 (-:
 ;	
-;	Executable:   /home/soft/gromacs/gromacs-2022.5/inst/cuda_shared_18.04/bin/gmx
-;	Data prefix:  /home/soft/gromacs/gromacs-2022.5/inst/cuda_shared_18.04
+;	Executable:   /home/soft/gromacs/gromacs-2022.3/inst/cuda_shared_18.04/bin/gmx
+;	Data prefix:  /home/soft/gromacs/gromacs-2022.3/inst/cuda_shared_18.04
 ;	Working dir:  /home/kevin/git/simulation_attender/tests/water_simulation
 ;	Command line:
-;	  gmx grompp -f production.mdp -c spc216_stacked.gro -p topol_stacked.top -o production.tpr -maxwarn 1
+;	  gmx grompp -f production.mdp -c spc216_fails.gro -p topol_stacked.top -o production_fails.tpr -maxwarn 1
 
 ; VARIOUS PREPROCESSING OPTIONS
 ; Preprocessor information: use cpp syntax.
@@ -169,7 +169,7 @@ annealing-temp           =
 ; GENERATE VELOCITIES FOR STARTUP RUN
 gen-vel                  = no
 gen-temp                 = 300
-gen-seed                 = 515362716
+gen-seed                 = 2126441437
 
 ; OPTIONS FOR BONDS    
 constraints              = h-bonds

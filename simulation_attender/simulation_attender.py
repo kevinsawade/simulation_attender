@@ -201,7 +201,8 @@ class LocalFile(type(Path())):
             }
         )
         series.name = str(self)
-        files.at[str(self)] = series
+        series = series.to_frame().T
+        files = pd.concat([files, series], axis="rows")
         store_dfs_to_hdf5(self.db_file, files, sims)
 
     def rename(self, target, backup=False):
@@ -317,7 +318,8 @@ class Simulation:
             }
         )
         series.name = self.hash
-        sims.at[self.hash] = series
+        series = series.to_frame().T
+        sims = pd.concat([sims, series], axis="rows")
         store_dfs_to_hdf5(self.db_file, files, sims)
 
     @property
@@ -400,7 +402,6 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
         sims = pd.DataFrame(
             {
                 "tpr_file": [],
-                "hash": [],
                 "time_added": [],
                 "time_last_checked": [],
                 "state": [],
@@ -410,14 +411,13 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
         sims = sims.astype(
             {
                 "tpr_file": str,
-                "hash": str,
                 "time_added": "datetime64[ns]",
                 "time_last_checked": "datetime64[ns]",
                 "state": str,
                 "jobids": str,
             }
         )
-        sims = sims.set_index("hash")
+        sims.index.name = "hash"
         sims = sims.sort_values(by="time_added")
         store_dfs_to_hdf5(db_file, files, sims)
         return files, sims
@@ -444,9 +444,10 @@ def cli(
     ctx: click.Context,
     debug: bool,
 ) -> int:
-    click.echo(f"Debug mode is {'on' if debug else 'off'}")
     ctx.ensure_object(dict)
     ctx.obj["DEBUG"] = debug
+    if debug:
+        click.echo(f"Running in debug mode. Printing additional info.")
     return 1
 
 
@@ -732,14 +733,16 @@ def collect(
     click.echo(f"Collecting simulations in {start_dir}")
     tpr_files = [LocalFile(f) for f in start_dir.rglob(f"**/{pattern}*tpr")]
     click.echo(f"Found {len(tpr_files)} tpr files in {start_dir}")
-
+    if ctx.obj['DEBUG']:
+        click.echo("Here are the tpr files:")
+        for tpr_file in tpr_files:
+            click.echo(str(tpr_file))
     # track collected sims
     collected_sims = 0
 
     # iterate over tpr files and create simulation objects
     for tpr_file in tpr_files:
         sim = Simulation(tpr_file, db_file)
-        click.echo(f"{sim=} {sim.in_database=} {db_file=}")
         if not sim.in_database:
             sim.to_database()
             tpr_file.sim_hash = sim.hash
@@ -751,9 +754,6 @@ def collect(
         click.echo(f"Collected {collected_sims} new tpr files.")
     else:
         click.echo(f"There were no tpr files in the directory {start_dir}.")
-
-    # files, sims = get_db(db_file)
-    #     new_sims = pd.DataFrame({}, columns=files.columns)
     return 0
 
 

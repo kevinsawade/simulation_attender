@@ -20,20 +20,21 @@ from simulation_attender import get_db
 class TestSimAttender:
     db_file = Path("/app/sims.h5")
     tpr_file = Path("/app/production.tpr")
+    tpr_file_fails = Path("/app/production_fails.tpr")
     dir1 = Path("/work/simulation1")
     dir2 = Path("/work/simulation2")
 
     def teardown_method(self):
         if self.db_file.is_file():
             self.db_file.unlink()
+        del self.runner
 
     def setup_method(self):
         if self.db_file.is_file():
             self.db_file.unlink()
-        if not self.dir1.is_dir():
-            self.dir1.mkdir(parents=True, exist_ok=True)
-        if not self.dir2.is_dir():
-            self.dir2.mkdir(parents=True, exist_ok=True)
+        for dir_ in Path("/work").glob("*/"):
+            if dir_.is_dir():
+                shutil.rmtree(dir_)
         self.runner = CliRunner()
 
     def test_help_message(self):
@@ -47,18 +48,29 @@ class TestSimAttender:
 
     def test_collect(self):
         """Tests, whether CLI collect /work is able to find all tpr files and then add them to the database"""
+        self.dir1.mkdir(parents=True, exist_ok=True)
+        self.dir2.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(self.tpr_file, self.dir1 / "production.tpr")
         shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
         assert (self.dir1 / "production.tpr").is_file()
-        result = self.runner.invoke(cli, ["collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
-        print(result.output)
-        # assert "2" in result.output, print("There should be some printing here, informing the user about the new files")
+        result = self.runner.invoke(cli, ["-D", "collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
+        assert "2" in result.output, print("There should be some printing here, informing the user about the new files")
         _, sims = get_db(self.db_file)
         assert len(sims) == 2, print("After adding 2 .tpr files, the sims dataframe should be len == 2.")
 
     def test_list(self):
-        """Tests whether CLI list understands tail, head, slice, today d lists sims and files."""
-        assert False
+        """Tests whether CLI list understands tail, head, slice, today on lists sims and files."""
+        dirs = []
+        for i in range(12):
+            dir_ = Path(f"/work/simulation{i}")
+            dir_.mkdir(parents=True, exist_ok=True)
+            dirs.append(dir_)
+            shutil.copyfile(self.tpr_file, dir_ / "production.tpr")
+        result = self.runner.invoke(cli, ["collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
+        _, sims = get_db(self.db_file)
+        assert len(sims) == 12, print("After adding 12 .tpr files, the sims dataframe should be len == 12.")
+        result = self.runner.invoke(cli, ["list", "tail", "-n", "10"])
+        assert result.output.count("SETUP") == 10
 
     def test_overwriting_tpr_file_raises_error(self):
         """Tests, whether changing a tpr file on disk and reloading the sim breaks it."""
