@@ -241,7 +241,7 @@ class LocalFile(type(Path())):
         )
         # super().replace(target=target)
 
-    def unlink(self):
+    def unlink(self, **kwargs):
         raise Exception(
             f"Can't unlink with `running_rabbit."
             f"{self.__class__.__name__}. Use `simulation.delete` instead."
@@ -400,7 +400,6 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
         sims = pd.DataFrame(
             {
                 "tpr_file": [],
-                "hash": [],
                 "time_added": [],
                 "time_last_checked": [],
                 "state": [],
@@ -410,14 +409,12 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
         sims = sims.astype(
             {
                 "tpr_file": str,
-                "hash": str,
                 "time_added": "datetime64[ns]",
                 "time_last_checked": "datetime64[ns]",
                 "state": str,
                 "jobids": str,
             }
         )
-        sims = sims.set_index("hash")
         sims = sims.sort_values(by="time_added")
         store_dfs_to_hdf5(db_file, files, sims)
         return files, sims
