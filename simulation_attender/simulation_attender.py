@@ -242,7 +242,7 @@ class LocalFile(type(Path())):
         )
         # super().replace(target=target)
 
-    def unlink(self):
+    def unlink(self, **kwargs):
         raise Exception(
             f"Can't unlink with `running_rabbit."
             f"{self.__class__.__name__}. Use `simulation.delete` instead."
