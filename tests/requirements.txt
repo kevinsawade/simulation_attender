@@ -1,8 +1,8 @@
+scikit-learn
 pytest
 coverage
 pytest-docker-compose
 pytest-cov
-hypothesis
 vulture
 flake8
 black

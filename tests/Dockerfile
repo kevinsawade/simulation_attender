@@ -1,4 +1,4 @@
-FROM slurm-node
+FROM kevinsawade/slurm-node
 
 #####################
 # ANACONDA

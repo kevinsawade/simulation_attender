@@ -1,4 +1,4 @@
-FROM modules-gmx-base
+FROM kevinsawade/modules-gmx-base:latest
 
 #####################
 # BASICS

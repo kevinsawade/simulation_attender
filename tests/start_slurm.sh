@@ -35,19 +35,24 @@ if [ ! $SHOULD_EXIT -eq 0 ] ; then
 	exit
 fi
 
-# build containers
-docker build -t modules-gmx-base -f modules/Dockerfile \
+docker build --pull -t kevinsawade/modules-gmx-base:latest -f modules/Dockerfile \
   --build-arg GOSU_VERSION="1.11" \
   --build-arg ENVIRONMENT_MODULES_VERSION="5.2.0" \
   --build-arg GMX_VERSION="2023.1" \
   --build-arg CMAKE_VERSION="3.26.3" .
-docker build -t ldap-client -f ldap_client/Dockerfile .
-docker build -t slurm-base --build-arg SLURM_VERSION="slurm-22-05-8-1" -f slurm_base/Dockerfile .
-docker build -t slurm-db -f slurm_db/Dockerfile .
-docker build -t slurm-master -f slurm_master/Dockerfile .
-docker build -t slurm-node -f slurm_node/Dockerfile .
-docker build -t run-tests .
+docker push kevinsawade/modules-gmx-base:latest
+docker build --pull -t kevinsawade/ldap-client:latest -f ldap_client/Dockerfile .
+docker push kevinsawade/ldap-client:latest
+docker build --pull -t kevinsawade/slurm-base:latest --build-arg SLURM_VERSION="slurm-22-05-8-1" -f slurm_base/Dockerfile .
+docker push kevinsawade/slurm-base:latest
+docker build --pull -t kevinsawade/slurm-db:latest -f slurm_db/Dockerfile .
+docker push kevinsawade/slurm-db:latest
+docker build --pull -t kevinsawade/slurm-master:latest -f slurm_master/Dockerfile .
+docker push kevinsawade/slurm-master:latest
+docker build --pull -t kevinsawade/slurm-node:latest -f slurm_node/Dockerfile .
+docker push kevinsawade/slurm-node:latest
+docker build --pull -t kevinsawade/run-simulation-attender-tests:latest .
+docker push kevinsawade/run-simulation-attender-tests:latest
 
 # start the swarm
-docker compose build
 docker compose up -d

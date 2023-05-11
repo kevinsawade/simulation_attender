@@ -1,4 +1,4 @@
-FROM ldap-client
+FROM kevinsawade/ldap-client
 
 #####################
 # NEEDED PACKAGES

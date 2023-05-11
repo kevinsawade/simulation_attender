@@ -91,7 +91,7 @@ services:
 
 
   client:
-    image: ldap-client
+    image: kevinsawade/ldap-client
     container_name: client
     domainname: example.org
     hostname: client.example.org
@@ -116,7 +116,7 @@ services:
     build:
       context: .
       dockerfile: slurm_db/Dockerfile
-    image: slurm-db
+    image: kevinsawade/slurm-db
     container_name: slurm_db
     hostname: slurm-database.example.org
     environment:
@@ -130,7 +130,7 @@ services:
 
 
   slurm_master:
-    image: slurm-master
+    image: kevinsawade/slurm-master
     container_name: slurm_master
     domainname: example.org
     hostname: slurm-master.example.org
@@ -150,7 +150,7 @@ services:
       - "./work:/work"
 
   c1:
-    image: run-tests
+    image: kevinsawade/run-simulation-attender-tests
     container_name: c1
     domainname: example.org
     hostname: c1.example.org
@@ -168,7 +168,7 @@ services:
       - "./work:/work"
 
 #  c2:
-#    image: slurm-node
+#    image: kevinsawade/slurm-node
 #    container_name: c2
 #    domainname: example.org
 #    hostname: c2.example.org

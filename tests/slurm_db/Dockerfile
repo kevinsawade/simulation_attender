@@ -1,4 +1,4 @@
-FROM slurm-base
+FROM kevinsawade/slurm-base
 MAINTAINER kevinsawade
 
 # fix permissions on slurm stuff

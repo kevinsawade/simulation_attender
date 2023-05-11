@@ -1,4 +1,4 @@
-FROM slurm-base
+FROM kevinsawade/slurm-base
 
 #####################
 # SLURM
