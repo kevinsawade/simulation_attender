@@ -72,6 +72,18 @@ class TestSimAttender:
         result = self.runner.invoke(cli, ["list", "tail", "-n", "10"])
         assert result.output.count("SETUP") == 10
 
+    def test_check_also_change_state(self):
+        """Tests, whether check works through the running sims and prints some info."""
+        self.dir1.mkdir(parents=True, exist_ok=True)
+        self.dir2.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(self.tpr_file, self.dir1 / "production.tpr")
+        shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
+        result = self.runner.invoke(cli, ["-D", "collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
+        result = self.runner.invoke(cli, ["check"], catch_exceptions=True)
+        assert result.output.count("Simulation") == 2, print("Adding 2 sims and then checking, should also print two sims.")
+        result = self.runner.invoke(cli, ["check"], catch_exceptions=True)
+        assert "no sims" in result.output, print("A second call to check should inform about no changes.")
+
     def test_overwriting_tpr_file_raises_error(self):
         """Tests, whether changing a tpr file on disk and reloading the sim breaks it."""
         assert False

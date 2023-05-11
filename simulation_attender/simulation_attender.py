@@ -18,7 +18,7 @@ from __future__ import annotations
 import os
 import warnings
 from datetime import datetime, date
-from enum import Enum
+from enum import Enum, EnumMeta
 from functools import total_ordering
 from hashlib import md5
 from io import StringIO
@@ -44,9 +44,10 @@ warnings.simplefilter(action="ignore", category=pd.errors.PerformanceWarning)
 
 
 __version__ = "0.0.1"
-
-
 __all__ = ["cli", "get_db"]
+
+
+MAX_UNDO = 5
 
 
 JOB_TEMPLATE="""\
@@ -70,8 +71,21 @@ cd {{ directory }}
 ################################################################################
 
 
+class MetaEnum(EnumMeta):
+    def __contains__(cls, item):
+        try:
+            cls(item)
+        except ValueError:
+            return False
+        return True
+
+
+class BaseEnum(Enum, metaclass=MetaEnum):
+    pass
+
+
 @total_ordering
-class SimState(Enum):
+class SimState(BaseEnum):
     CRASHED = -2
     SETUP = -1
     TEMPLATED = 0
@@ -196,7 +210,6 @@ class LocalFile(type(Path())):
             {
                 "hash": self.hash,
                 "time_added": self.instantiation_time,
-                "time_last_checked": datetime.now(),
                 "sim_hash": self.sim_hash
             }
         )
@@ -294,7 +307,7 @@ class Simulation:
             db_file,
             series["state"],
             series["time_added"],
-            [int(i) for i in series["jobids"].split(", ")] if series["jobids"] != "" else None,
+            [int(i) for i in series["job_ids"].split(", ")] if series["job_ids"] != "" else None,
         )
 
     @property
@@ -312,9 +325,8 @@ class Simulation:
             {
                 "tpr_file": str(self.tpr_file),
                 "time_added": self.instantiation_time,
-                "time_last_checked": datetime.now(),
                 "state": str(self.state),
-                "jobids": ", ".join(self.job_ids),
+                "job_ids": ", ".join(self.job_ids),
             }
         )
         series.name = self.hash
@@ -385,7 +397,6 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
                 "file": [],
                 "hash": [],
                 "time_added": [],
-                "time_last_checked": [],
                 "sim_hash": [],
             }
         )
@@ -394,7 +405,6 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
                 "file": str,
                 "hash": str,
                 "time_added": "datetime64[ns]",
-                "time_last_checked": "datetime64[ns]",
                 "sim_hash": str,
             }
         )
@@ -403,18 +413,16 @@ def get_db(db_file: Path) -> tuple[DataFrame, DataFrame]:
             {
                 "tpr_file": [],
                 "time_added": [],
-                "time_last_checked": [],
                 "state": [],
-                "jobids": [],
+                "job_ids": [],
             }
         )
         sims = sims.astype(
             {
                 "tpr_file": str,
                 "time_added": "datetime64[ns]",
-                "time_last_checked": "datetime64[ns]",
                 "state": str,
-                "jobids": str,
+                "job_ids": str,
             }
         )
         sims.index.name = "hash"
@@ -502,7 +510,7 @@ def list_files(
             files = files[files["time_added"] > identifier]
         except:
             click.echo(
-                f"simulation_attender.py list can take IDENTIFIER arguments like: "
+                f"simulation_attender.py files can take IDENTIFIER arguments like: "
                 f"'tail -n 20', or 'today', or '1 week ago'. The argument "
                 f"you provided '{identifier}' could not be understood."
             )
@@ -562,21 +570,22 @@ def _list_sims(
     db_file = Path(db_file)
     _, sims = get_db(db_file)
     identifier = " ".join(identifier)
+    all_job_ids = [i for j in sims["job_ids"] for i in list(map(str, j.split(".")))]
+    all_job_ids = list(filter(lambda x: bool(x), all_job_ids))
     if identifier == "tail":
         sims = sims.tail(int(n))
-        sims.index = sims.index.str[:7]
-        sims.index.name = "id"
     elif identifier == "head":
         sims = sims.head(int(n))
-        sims.index = sims.index.str[:7]
-        sims.index.name = "id"
     elif identifier == "slice":
         ind = slice(*map(lambda x: int(x.strip()) if x.strip() else None, n.split(':')))
+        click.echo(ind)
         sims = sims.iloc[ind]
-        sims.index = sims.index.str[:7]
-        sims.index.name = "id"
     elif identifier in sims.index.str[:7] or identifier in sims.index.str[:7]:
         sims.index = sims.index.str[:7]
+    elif identifier.upper() in SimState.__members__:
+        sims = sims[sims["state"] == identifier.upper()]
+    elif identifier in all_job_ids:
+        raise Exception("Accessing simulation by job_id currently not possible.")
     else:
         try:
             identifier = magicdate.magicdate(identifier)
@@ -584,13 +593,17 @@ def _list_sims(
                 identifier = datetime.combine(identifier, datetime.min.time())
             sims = sims[sims["time_added"] > identifier]
         except:
+            click.echo(f"{identifier}, {identifier.upper()}, {identifier.upper() in SimState}")
             click.echo(
                 f"simulation_attender.py list can take IDENTIFIER arguments like: "
-                f"'tail -n 20', or 'today', or '1 week ago'. The argument "
-                f"you provided '{identifier}' could not be understood."
+                f"'tail -n 20', 'today', '1 week ago', 'setup', 'running', or "
+                f"'slice -n -5:'.The argument you provided '{identifier}' "
+                f"could not be understood."
             )
             return pd.DataFrame({})
     if print_df:
+        sims.index = sims.index.str[:7]
+        sims.index.name = "id"
         prettify(sims)
     return sims
 
@@ -659,10 +672,12 @@ def template(
     )
     identifier = tuple(filter(lambda x: x not in args_to_delete, identifier))
     extra_args = {k.lstrip("-"): v for k, v in extra_args.items()}
-    identifier = ("today",) if not identifier else identifier
+    identifier = ("setup",) if not identifier else identifier
 
     # get sims to template
     sims_to_template = _list_sims(ctx, identifier, n, db_file, print_df=False)
+    if ctx.obj["DEBUG"]:
+        click.echo(f"These sims will be templated: {sims_to_template}")
     if sims_to_template.size == 0:
         click.echo(
             f"simulation_attender.py template can take IDENTIFIER arguments like: "
@@ -696,7 +711,6 @@ def template(
         job_file.to_database()
         sim.state = SimState["TEMPLATED"]
         sim.to_database()
-
     return 0
 
 
@@ -713,6 +727,16 @@ def template(
     help="The database file to read or create",
 )
 @click.option(
+    "-s",
+    "--skip-conflicts",
+    "skip",
+    is_flag=True,
+    default=False,
+    help=("Skip over otherwise conflicting tpr files. Simulation_attender.py can"
+         "only track one simulation per directory. This means, that some tpr files won't "
+         "be added to the database"),
+)
+@click.option(
     "-p",
     "--pattern",
     "pattern",
@@ -727,6 +751,7 @@ def collect(
     start_dir: str,
     pattern: str,
     db_file: str,
+    skip: bool = False,
 ) -> int:
     db_file = Path(db_file)
     start_dir = Path(start_dir).resolve()
@@ -741,28 +766,101 @@ def collect(
     collected_sims = 0
 
     # iterate over tpr files and create simulation objects
-    for tpr_file in tpr_files:
+    for i, tpr_file in enumerate(tpr_files):
+        if ctx.obj['DEBUG']:
+            click.echo(f"Adding {tpr_file} to database.")
         sim = Simulation(tpr_file, db_file)
         if not sim.in_database:
+            files, _ = get_db(db_file)
+            if files.size > 0:
+                existing_tpr_files_dirs = set(files.index.str.split("/").str[:-1].str.join("/").tolist())
+            else:
+                existing_tpr_files_dirs = []
+            if str(tpr_file.parent) in existing_tpr_files_dirs and not skip:
+                click.echo(f"The database already tracks a tpr file in {tpr_file.parent} "
+                           f"Please move {tpr_file} somewhere else; simulation_attender.py "
+                           f"can only track one tpr_file per directory.")
+                return 3
+            elif str(tpr_file.parent) in existing_tpr_files_dirs and skip:
+                click.echo(f"Skipping {tpr_file}, because a sim in that directory is already tracked.")
+                continue
             sim.to_database()
             tpr_file.sim_hash = sim.hash
             tpr_file.db_file = db_file
             tpr_file.to_database()
+            for file in tpr_file.parent.glob("*"):
+                if file.is_file():
+                    file = LocalFile(file)
+                    file.db_file = db_file
+                    file.sim_hash = sim.hash
+                    file.to_database()
             collected_sims += 1
+        else:
+            if ctx.obj["DEBUG"]:
+                click.echo(f"The file {tpr_file} is already tracked by {sim}.")
 
     if collected_sims > 0:
         click.echo(f"Collected {collected_sims} new tpr files.")
     else:
-        click.echo(f"There were no tpr files in the directory {start_dir}.")
+        click.echo(f"There were no (new) tpr files in the directory {start_dir}.")
     return 0
 
 
 @cli.command(help="Checks currently running sims and prints info about them.")
+@click.option(
+    "-db",
+    "--database-file",
+    "db_file",
+    default="sims.h5",
+    type=str,
+    help="The database file to read or create",
+)
 @click.pass_context
 def check(
         ctx: click.Context,
+        db_file: str,
 ) -> int:
-    raise NotImplementedError
+    # get db files
+    db_file = Path(db_file)
+    check_file = db_file.parent / ("." + db_file.name + "_check.h5")
+
+    # load dbs
+    current_files, current_sims = get_db(db_file)
+    last_checked_files, last_checked_sims = get_db(check_file)
+
+    # if new sims print
+    added_sims = list(set(current_sims.index) - set(last_checked_sims.index))
+    diff_sims = current_sims.loc[list(added_sims)]
+    if diff_sims.size > 0:
+        click.echo("Since last checking, these sims have been added:")
+        for i, diff_sim in diff_sims.iterrows():
+            click.echo(str(Simulation.from_series(diff_sim, db_file)))
+    else:
+        click.echo("Since last checking no sims have been added.")
+
+    # iterate over all ENQUEUED sims and check their state print
+    found = False
+    for i, row in current_sims.iterrows():
+        # check whether state has changed
+        if i in last_checked_sims.index:
+            if (old_state := last_checked_sims.loc[i, "state"]) != row["state"]:
+                click.echo(f"Since last checking, the state of sim {i[:7]} has changed "
+                           f"from {old_state} to {row['state']}.")
+                found = True
+        current_state = SimState[row["state"]]
+        if current_state is SimState.ENQUEUED or current_state is SimState.RUNNING:
+            # check for new files
+            for file in Path(row["tpr_file"]).parent.glob("*"):
+                if not file.is_file():
+                    continue
+                if str(file) not in current_files:
+                    click.echo(f"The file {file} is new.")
+            found = True
+
+    if not found:
+        click.echo("Since last checking no sims have changed their state.")
+    # finally write the new files and sims to the check db
+    store_dfs_to_hdf5(check_file, current_files, current_sims)
 
 
 ################################################################################
