@@ -1,7 +1,7 @@
 
 integrator               = md        
 dt                       = 0.002     ; 2 fs
-nsteps                   = 5000000   ; 10.0 ns
+nsteps                   = 500   ; 10.0 ns
 
 nstenergy                = 5000
 nstlog                   = 5000
