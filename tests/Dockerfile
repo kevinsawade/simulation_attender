@@ -21,4 +21,5 @@ RUN mkdir -p /sh_libs
 COPY sh_libs/liblog.sh /sh_libs/liblog.sh
 COPY water_simulation/production.tpr /app/production.tpr
 COPY water_simulation/production_fails.tpr /app/production_fails.tpr
+COPY water_simulation/production_short.tpr /app/production_short.tpr
 COPY test_simulation_attender.py /app/test_simulation_attender.py

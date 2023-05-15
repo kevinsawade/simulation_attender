@@ -7,6 +7,8 @@
 from __future__ import annotations
 import shutil
 from pathlib import Path
+
+import pytest
 from click.testing import CliRunner
 from simulation_attender import cli
 from simulation_attender import get_db
@@ -83,6 +85,11 @@ class TestSimAttender:
         assert result.output.count("Simulation") == 2, print("Adding 2 sims and then checking, should also print two sims.")
         result = self.runner.invoke(cli, ["check"], catch_exceptions=True)
         assert "no sims" in result.output, print("A second call to check should inform about no changes.")
+        with pytest.raises(Exception):
+            self.runner.invoke(cli, ["template"], catch_exceptions=False)
+        result = self.runner.invoke(cli, ["template", "--module-loads", "\"module load gromacs/2023.1\""])
+        _, sims = get_db(self.db_file)
+        assert (sims["state"] == "TEMPLATED").all(None)
 
     def test_overwriting_tpr_file_raises_error(self):
         """Tests, whether changing a tpr file on disk and reloading the sim breaks it."""

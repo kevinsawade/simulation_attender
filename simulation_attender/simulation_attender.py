@@ -491,6 +491,9 @@ def list_files(
         n: str = "10",
         db_file: Path = Path("sims.h5"),
 ) -> pd.DataFrame:
+    if identifier[0] == "-h" or identifier[0] == "--help":
+        click.echo(ctx.get_help())
+        return 0
     if not identifier:
         identifier = ("today", )
     db_file = Path(db_file)
@@ -552,6 +555,9 @@ def list_sims(
     n: str = "10",
     db_file: Path = Path("sims.h5"),
 ) -> pd.DataFrame:
+    if identifier[0] == "-h" or identifier[0] == "--help":
+        click.echo(ctx.get_help())
+        return 0
     if not identifier:
         identifier = ("today", )
     if identifier[0] == "slice":
@@ -593,7 +599,7 @@ def _list_sims(
                 identifier = datetime.combine(identifier, datetime.min.time())
             sims = sims[sims["time_added"] > identifier]
         except:
-            click.echo(f"{identifier}, {identifier.upper()}, {identifier.upper() in SimState}")
+            click.echo(f"{identifier}, {identifier}, {identifier in SimState}")
             click.echo(
                 f"simulation_attender.py list can take IDENTIFIER arguments like: "
                 f"'tail -n 20', 'today', '1 week ago', 'setup', 'running', or "
@@ -610,7 +616,7 @@ def _list_sims(
 
 @click.argument(
     "identifier",
-    required=True,
+    required=False,
     nargs=-1,
     type=click.UNPROCESSED,
 )
@@ -672,6 +678,9 @@ def template(
     )
     identifier = tuple(filter(lambda x: x not in args_to_delete, identifier))
     extra_args = {k.lstrip("-"): v for k, v in extra_args.items()}
+    if identifier == ("-h", ) or identifier == ("--help", ):
+        click.echo(ctx.get_help())
+        return 0
     identifier = ("setup",) if not identifier else identifier
 
     # get sims to template
@@ -699,12 +708,19 @@ def template(
 
         #  prepare the template dict
         template_dict = {'directory': sim.directory.resolve()} | extra_args
+        click.echo(str(template_dict))
         if "email" not in template_dict:
             template_dict["email"] = "no-one@example.com"
         for key, val in template_dict.items():
             if "{{ stem }}" in str(val):
                 template_dict[key] = val.replace("{{ stem }}", sim.tpr_file.stem)
-        rendered_text = template.render(template_dict)
+        try:
+            rendered_text = template.render(template_dict)
+        except jinja2.exceptions.UndefinedError as e:
+            missing = str(e).split("'")[1]
+            msg = (f"The placeholder '{missing}' in the template needs a definition "
+                   f"Pass the argument --{missing} to the template call.")
+            raise Exception(msg)
         job_file = Path(sim.directory) / "job.sh"
         job_file.write_text(rendered_text)
         job_file = LocalFile(job_file, db_file=db_file, sim_hash=sim.hash)
