@@ -81,9 +81,9 @@ class TestSimAttender:
         shutil.copyfile(self.tpr_file, self.dir1 / "production.tpr")
         shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
         result = self.runner.invoke(cli, ["-D", "collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
-        result = self.runner.invoke(cli, ["check"], catch_exceptions=True)
+        result = self.runner.invoke(cli, ["run"], catch_exceptions=True)
         assert result.output.count("Simulation") == 2, print("Adding 2 sims and then checking, should also print two sims.")
-        result = self.runner.invoke(cli, ["check"], catch_exceptions=True)
+        result = self.runner.invoke(cli, ["run"], catch_exceptions=True)
         assert "no sims" in result.output, print("A second call to check should inform about no changes.")
         with pytest.raises(Exception):
             self.runner.invoke(cli, ["template"], catch_exceptions=False)
