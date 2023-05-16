@@ -46,8 +46,8 @@ jobs:
       - name: Run pdoc
         run: |
           mkdir -p docs/build
-          pdoc --html --output-dir docs/build cleanup_sims --force
-          mv docs/build/cleanup_sims/cleanup_sims.html docs/build/index.html
+          pdoc --html --output-dir docs/build simulation_attender --force
+          mv docs/build/simulation_attender/simulation_attender.html docs/build/index.html
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.4.1
