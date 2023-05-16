@@ -1,0 +1,1911 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>simulation_attender.simulation_attender API documentation</title>
+<meta name="description" content="simulation_attender.py …" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>simulation_attender.simulation_attender</code></h1>
+</header>
+<section id="section-intro">
+<h1 id="simulation_attenderpy">simulation_attender.py</h1>
+<p>Attends GROMACS simulations on HPC clusters.</p>
+<p>Simulation attender works with these cluster management systems::</p>
+<ul>
+<li>slurm</li>
+<li>moab</li>
+<li>oracle gridengine</li>
+</ul>
+<p><strong>Features</strong>::
+* Works with slurm, moab, gridengine and can also attend local simulations.
+* Track simulations and files using easy to understand databases.
+* One place to get status updates on all your runnung gromacs simulations.
+* Undo-feature: Did an oopsie? Undo the last command using <code>python simulation_attender.py undo</code></p>
+<h2 id="coverage-and-unittest-report">Coverage And Unittest Report</h2>
+<p>Access the coverage report under:</p>
+<p><a href="https://kevinsawade.github.io/simulation_attender/htmlcov/index.html">https://kevinsawade.github.io/simulation_attender/htmlcov/index.html</a></p>
+<p>Access the unittest report under:</p>
+<p><a href="https://kevinsawade.github.io/simulation_attender/htmlcov/html_report.html">https://kevinsawade.github.io/simulation_attender/htmlcov/html_report.html</a></p>
+<h1 id="command-line-usage">Command line usage:</h1>
+<pre><code class="language-raw">Usage: cli [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  -D, --debug    Enable debug mode
+  -v, --version  Show the version and exit.
+  --help         Show this message and exit.
+
+Commands:
+  collect   Collect .tpr files from a starting_directory.
+  files     List files in the database.
+  list      List simulations in the database.
+  run       Runs enqueued simulations and prints general info.
+  submit    Submits templated jobs.
+  template  Add job.sh files to sims using a template.
+
+</code></pre>
+<h2 id="installation">Installation</h2>
+<p>simulation_attender.py is a monolithic script you just need two files:</p>
+<ul>
+<li>First install the requirements via:</li>
+</ul>
+<pre><code class="language-bash">$ pip install -r https://raw.githubusercontent.com/kevinsawade/simulation_attender/main/requirements.txt
+</code></pre>
+<ul>
+<li>Then get the main file:</li>
+</ul>
+<pre><code class="language-bash">$ wget https://raw.githubusercontent.com/kevinsawade/simulation_attender/main/simulation_attender/simulation_attender.py
+</code></pre>
+<h2 id="quickstart">Quickstart</h2>
+<pre><code class="language-bash"># collect simulations
+python simulation_attender.py collect /work
+
+# template the simulations
+python ../simulation_attender/simulation_attender.py template --module_loads &quot;module load gromacs/2023.1&quot; --command &quot;gmx mdrun -deffnm { stem }&quot;
+
+# list simulations
+python ../simulation_attender/simulation_attender.py list
+
+# submit
+python ../simulation_attender/simulation_attender.py submit
+
+# run and check
+python ../simulation_attender/simulation_attender.py run
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>You can call simulation attender from the command line by:</p>
+<pre><code class="language-bash">$ python simulation_attender.py --help
+</code></pre>
+<p>Simulation_attender.py stores states of simulations in a file called sims.h5.
+This file tracks not only the status of simulations but also all files inside the simulation directories.
+This means, that <strong>a simulation needs to be alone in its directory</strong>.</p>
+<h3 id="collecting-simulations">Collecting simulations</h3>
+<p>Before you can start managing your simulations with simulation_attender, you need to add them
+to the database. That's where the <code>collect</code> command comes in. The collect command recourses through
+the directory provided as a positional argument (<code>START_DIR</code>) and looks for <code>.tpr</code> files. These files
+are added to the database file, which is standard <code>sims.h5</code>, but you can maintain many of these database files.
+Normally you only want to call:</p>
+<pre><code class="language-bash">$ python simulation_attender.py collect .
+</code></pre>
+<p>You can provide a grep pattern for <code>-p</code> to filter the <code>.tpr</code> files in <code>START_DIR</code>,
+to only use certain tpr files (e.g. <code>"*test*"</code>, don't forget the quotation marks <code>"</code>, as
+the bash shell will usually expand the wildcard characters <code>*</code> before calling the command):</p>
+<pre><code class="language-bash">$ python simulation_attender.py collect /work_fs/username/workspace -p &quot;*test*&quot;
+</code></pre>
+<p>Change the database with the <code>-db</code> option:</p>
+<pre><code class="language-bash">$ python simulation_attender.py collect . -db grant1_sims.h5
+</code></pre>
+<p>As <strong>there can only be one <code>.tpr</code> file per directory</strong> you could run into some
+errors, if you have multiple in one directory. If you are sure what you are doing and
+only want to run the simulation of one <code>.tpr</code> file in the directory, you can skip
+these errors with the <code>-s</code> flag.</p>
+<pre><code class="language-raw">Usage: cli collect [OPTIONS] START_DIR
+
+  Collect .tpr files from a starting_directory.
+
+Options:
+  -p, --pattern TEXT         A pattern to match agains the files found
+  -s, --skip-conflicts       Skip over otherwise conflicting tpr files.
+                             Simulation_attender.py can only track one
+                             simulation per directory. This means, that some tpr
+                             files won't be added to the database
+  -db, --database-file TEXT  The database file to read or create
+  --help                     Show this message and exit.
+
+</code></pre>
+<h3 id="listing-simulations">Listing simulations</h3>
+<p>The <code>list</code> command helps you to interact with the simulation database. It can take
+a wide variety of inputs to print only the rows you want from the database. The possibilities are::</p>
+<ul>
+<li><code>tail</code>: Print the last 5 rows of the database.</li>
+<li><code>tail -n 10</code>: Print the last 10 rows of the database.</li>
+<li><code>head</code>: Print the first five rows of the database.</li>
+<li><code>head -n 10</code>: Print the first 10 rows of the database.</li>
+<li><code>slice ::5</code>: Print every 5th row of the database.</li>
+<li><code>slice -20::3</code>: Print every 3rd row of the last 20 rows of the datbase.</li>
+<li><code>today</code>: Print simulations, that have been added today.</li>
+<li><code>1 week ago</code>: Print simulations that have been added in the last week.</li>
+<li>More time-selections are available.</li>
+<li><code>running</code>: Print all running simulations.</li>
+<li><code>setup</code>: Print all simulations, currently in the setup stage.</li>
+<li><code>1asd4fg</code>: Print simulation with id <code>1asd4fg</code>.</li>
+</ul>
+<pre><code class="language-raw">Usage: cli list [OPTIONS] [IDENTIFIER]...
+
+  List simulations in the database.
+
+Options:
+  -db, --database-file TEXT  The database file to read or create
+  -n TEXT
+  --help                     Show this message and exit.
+
+</code></pre>
+<h3 id="templating-simulations">Templating simulations</h3>
+<p>The next step is to create job scripts for the respective simulations. You can
+provide a templated job script with the <code>-t</code> option. These job scripts should in general
+adhere to your cluster's own documentation page and might look like this:</p>
+<pre><code class="language-bash">#!/bin/bash
+#SBATCH --chdir=/path/to/sim_dir
+#SBATCH --export=NONE
+#SBATCH --mail-user=my_mail@university.com
+#SBATCH --mail-type=BEGIN,END
+
+module load gromacs/2023.1
+
+gmx_mpi mdrun -deffnm sim
+</code></pre>
+<p>or:</p>
+<pre><code class="language-bash">#!/bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:05:00
+#PBS -l mem=1gb
+#PBS -S /bin/bash
+#PBS -N Simple_Script_Job
+#PBS -j oe
+#PBS -o LOG
+
+cd /path/to/sim_dir
+
+module load gromacs/2023.1
+
+mpirun -n 1 gmx_mpi mdrun -deffnm production
+</code></pre>
+<p>However, simulation_attender.py uses the jinja2 templating engine to fill your
+job scripts with appropriate values. This is especially because most job scripts contain
+a directory that needs to be adjusted for every job. Templates can be written like normal
+job scripts, but can contain <code>{{ placeholder }}</code> placeholders, in which the values will
+be filled with appropriate values from the simulations. A template can look like this:</p>
+<pre><code class="language-bash">#!/bin/bash
+#SBATCH --chdir={{ directory }}
+#SBATCH --export=NONE
+#SBATCH --mail-user={{ email }}
+#SBATCH --mail-type=BEGIN,END
+
+{{ module_loads }}
+
+cd {{ directory }}
+
+{{ command }}
+</code></pre>
+<p>The following placeholders are available by the simulation::</p>
+<ul>
+<li><code>{{ directory }}</code>: The directory, where the <code>.tpr</code> file is in.</li>
+<li><code>{{ stem }}</code>: The <code>stem</code> of the <code>.tpr</code> file (.i.e. for <code>production.tpr</code> the stem would be <code>production</code>).</li>
+</ul>
+<p>If placeholders are not defined simulation_attender will raise an Exception (except for the <code>{{ email }}</code> placeholder).
+Placeholder can be filled with arguments to the <code>template</code> call, like so:</p>
+<pre><code class="language-bash">$ python simulation_attender.py template --command &quot;gmx mdrun -deffnm {{ stem }}&quot; --module_loads &quot;module load gromacs/2023.1&quot;
+</code></pre>
+<p>The <code>template</code> command can also filter simulations like the <code>list</code> command. In that case, you could do:</p>
+<pre><code class="language-bash">$ python simulation_attender.py template today -t template_file.sh
+</code></pre>
+<p>The template command will create new files called <code>job.sh</code> in the respective simulation directories.</p>
+<pre><code class="language-raw">Usage: cli template [OPTIONS] [IDENTIFIER]...
+
+  Add job.sh files to sims using a template.
+
+Options:
+  -t, --template-file TEXT   The template file to fill with values.
+  -db, --database-file TEXT  The database file to read or create
+  -n TEXT
+  --help                     Show this message and exit.
+
+</code></pre>
+<h3 id="submitting">Submitting</h3>
+<p>The <code>submit</code> command submits templated simulations to the job manager. It can interact with::</p>
+<ul>
+<li>slurm</li>
+<li>moab</li>
+<li>gridengine</li>
+</ul>
+<p>cluster management software. The argument <code>-max</code> makes <code>submit</code> stop, when this number is reached.
+This can come in handy, if your cluster allows you to only have X amount of concurrent (pending and running) jobs.
+The <code>submit</code> command adds the jobid of the simulations to the database.
+You can also use simulation_attender.py to run simulations locally. In which
+case you should provide <code>-cm local</code> ot the <code>submit</code> call. Running locally is special, because the maximum
+number of concurrent simulations on a local system is 1. The <code>submit</code> command also writes a special job file
+to the simulation directory (lacking the <code>SBATCH</code> or <code>PBS</code> declarations) and uses the process' PID as the
+jobid of the simulation. Example:</p>
+<pre><code class="language-raw">Usage: cli submit [OPTIONS]
+
+  Submits templated jobs.
+
+Options:
+  -cm, --cluster-manager TEXT     The cluster manager to use. Can be 'auto' to
+                                  detect either slurm, moab, gridengine.Can be
+                                  'slurm', 'moab', 'gridengine', or 'local'. If
+                                  'local' is provided, the batch script will be
+                                  executed as a background process and the pid
+                                  will be used as jobid.
+  -max, --max-concurrent-sims INTEGER
+                                  The maximum number of concurrent simulations.
+  -db, --database-file TEXT       The database file to read or create.
+  --help                          Show this message and exit.
+
+</code></pre>
+<h3 id="running">Running</h3>
+<p>The <code>run</code> command of simulation_attender.py is the jack of all trades. It looks through the database and
+updates you on your simulations.</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+################################################################################
+# simulation_attender.py attends simulations on HPC clusters
+#
+# Copyright 2019-2022 University of Konstanz and the Authors
+#
+# Authors:
+# Kevin Sawade
+#
+# cleanup_sims.py is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation, either version 2.1
+# of the License, or (at your option) any later version.
+# This package is distributed in the hope that it will be useful to other
+# researches. IT DOES NOT COME WITH ANY WARRANTY WHATSOEVER; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# See &lt;http://www.gnu.org/licenses/&gt;.
+################################################################################
+&#34;&#34;&#34;# simulation_attender.py
+
+Attends GROMACS simulations on HPC clusters.
+
+Simulation attender works with these cluster management systems::
+
+* slurm
+* moab
+* oracle gridengine
+
+**Features**::
+* Works with slurm, moab, gridengine and can also attend local simulations.
+* Track simulations and files using easy to understand databases.
+* One place to get status updates on all your runnung gromacs simulations.
+* Undo-feature: Did an oopsie? Undo the last command using `python simulation_attender.py undo`
+
+Coverage and Unittest Report
+----------------------------
+
+Access the coverage report under:
+
+https://kevinsawade.github.io/simulation_attender/htmlcov/index.html
+
+Access the unittest report under:
+
+https://kevinsawade.github.io/simulation_attender/htmlcov/html_report.html
+
+&#34;&#34;&#34;
+
+################################################################################
+# Imports
+################################################################################
+
+
+from __future__ import annotations
+
+import os
+import shlex
+import shutil
+import warnings
+from copy import deepcopy
+from datetime import datetime, date
+from enum import Enum, EnumMeta
+from functools import total_ordering
+from hashlib import md5
+from io import StringIO
+from pathlib import Path
+from subprocess import PIPE, Popen, run
+from time import sleep
+from typing import Any, List, Optional, Sequence, Tuple, Union
+
+import click
+import jinja2
+import magicdate
+import numpy as np
+import pandas as pd
+import sys
+from imohash import hashfile
+from pandas import DataFrame
+from rich_dataframe import prettify
+from click.testing import CliRunner
+
+warnings.simplefilter(action=&#34;ignore&#34;, category=pd.errors.PerformanceWarning)
+
+################################################################################
+# Gobals
+################################################################################
+
+
+__version__ = &#34;0.0.1&#34;
+__all__ = [&#34;cli&#34;, &#34;get_db&#34;]
+_dryrun = True
+_this_module = sys.modules[__name__]
+
+MAX_UNDO = 5
+
+
+JOB_TEMPLATE = &#34;&#34;&#34;\
+#!/bin/bash
+#SBATCH --chdir={{ directory }}
+#SBATCH --export=NONE
+#SBATCH --mail-user={{ email }}
+#SBATCH --mail-type=BEGIN,END
+
+{{ module_loads }}
+
+cd {{ directory }}
+
+{{ command }}
+
+&#34;&#34;&#34;
+
+LOCAL_BATCH = &#34;&#34;&#34;\
+#!/bin/bash
+
+cd {{ directory }}
+
+{{ command }} 2&gt; proc.err 1&gt; proc.out &amp;
+CMD_PID=$!
+echo $CMD_PID
+
+&#34;&#34;&#34;
+
+
+################################################################################
+# Helper Classes
+################################################################################
+
+
+
+class Capturing(list):
+    &#34;&#34;&#34;Class to capture print statements from function calls.
+
+    Examples:
+        &gt;&gt;&gt; # write a function
+        &gt;&gt;&gt; def my_func(arg=&#39;argument&#39;):
+        ...     print(arg)
+        ...     return(&#39;fin&#39;)
+        &gt;&gt;&gt; # use capturing context manager
+        &gt;&gt;&gt; with Capturing() as output:
+        ...     my_func(&#39;new_argument&#39;)
+        &gt;&gt;&gt; print(output)
+        [&#39;new_argument&#39;, &#34;&#39;fin&#39;&#34;]
+
+    &#34;&#34;&#34;
+
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio  # free up some memory
+        sys.stdout = self._stdout
+
+
+class MetaEnum(EnumMeta):
+    def __contains__(cls, item):
+        try:
+            cls(item)
+        except ValueError:
+            return False
+        return True
+
+
+class BaseEnum(Enum, metaclass=MetaEnum):
+    pass
+
+
+@total_ordering
+class SimState(BaseEnum):
+    CRASHED = -2
+    SETUP = -1
+    TEMPLATED = 0
+    ENQUEUED = 1
+    RUNNING = 2
+    FINISHED = 3
+    ORPHANED = 4
+
+    def __str__(self):
+        return self.name
+
+    def __lt__(self, other):
+        if self.__class__ is other.__class__:
+            return self.value &lt; other.value
+        return NotImplemented
+
+
+class LocalManager:
+    @property
+    def sims(self) -&gt; pd.DataFrame:
+        ps = Popen(&#34;ps -e | grep gmx&#34;, shell=True, stdout=PIPE)
+        procs = ps.stdout.read().decode().splitlines()
+        df = pd.DataFrame({}, columns=[&#34;jobid&#34;, &#34;tty&#34;, &#34;time&#34;, &#34;cmd&#34;])
+        series = []
+        for line in procs:
+            data = line.split()
+            series.append({
+                &#34;jobid&#34;: int(data[0]),
+                &#34;tty&#34;: data[1],
+                &#34;time&#34;: data[2],
+                &#34;cmd&#34;: data[3],
+            })
+        if len(series) == 0:
+            return df
+        df = pd.DataFrame.from_records(series)
+        return df
+
+    def submit(self, sim: Simulation) -&gt; int:
+        cmd = f&#34;bash {sim.directory}/job.sh&#34;
+        proc = Popen(shlex.split(cmd), stdout=PIPE, stderr=PIPE)
+        out, err = proc.communicate()
+        pid = int(out.decode())
+        sim.job_ids.append(pid)
+        sim.state = SimState.ENQUEUED
+        sim.to_database()
+        return pid
+
+    def cancel(self):
+        raise NotImplementedError
+
+    def out_file(self, sim: Simulation) -&gt; str:
+        return (Path(sim.directory) / &#34;proc.out&#34;).read_text()
+
+    def err_file(self, sim: Simulation) -&gt; str:
+        return (Path(sim.directory) / &#34;proc.err&#34;).read_text()
+
+
+class SlurmClusterManager:
+    @property
+    def sims(self) -&gt; pd.DataFrame:
+        cmd = &#34;squeue&#34;
+        proc = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+        out = proc.stdout.splitlines()[1:]
+        df = pd.DataFrame({}, columns=[&#39;jobid&#39;, &#39;partition&#39;, &#39;name&#39;, &#39;user&#39;, &#39;state&#39;, &#39;time&#39;, &#39;nodes&#39;, &#39;nodelist&#39;])
+        if not out:
+            return df
+        series = []
+        for line in out:
+            data = line.split(None, 7)
+            series.append({&#39;jobid&#39;: int(data[0]),
+                           &#39;partition&#39;: data[1],
+                           &#39;name&#39;: data[2],
+                           &#39;user&#39;: data[3],
+                           &#39;state&#39;: data[4],
+                           &#39;time&#39;: data[5],
+                           &#39;nodes&#39;: data[6],
+                           &#39;nodelist&#39;: data[7],
+                           })
+        df = pd.DataFrame.from_records(series)
+        return df
+
+    def submit(self):
+        cmd = &#34;sbatch&#34;
+        raise NotImplementedError
+
+    def cancel(self):
+        cmd = &#34;scancel&#34;
+        raise NotImplementedError
+
+    def out_file(self, sim: Simulation) -&gt; str:
+        return (Path(sim.directory) / f&#34;slurm-{sim.job_ids[-1]}.out&#34;).read_text()
+
+    def err_file(self, sim: Simulation) -&gt; str:
+        return (Path(sim.directory) / f&#34;slurm-{sim.job_ids[-1]}.err&#34;).read_text()
+
+
+class GridEngineClusterManager:
+    @property
+    def sims(self) -&gt; pd.DataFrame:
+        import getpass
+        username = getpass.getuser()
+        cmd = f&#34;qstat -u {username}&#34;
+        proc = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+        df = pd.DataFrame({}, columns=[&#39;jobid&#39;, &#39;username&#39;, &#39;queue&#39;, &#39;jobname&#39;, &#39;sessId&#39;, &#39;NDS&#39;, &#39;TSK&#39;, &#39;req_memory&#39;,
+                                       &#39;req_time&#39;, &#39;S&#39;, &#39;elap_time&#39;])
+        #                                                                                   Req&#39;d       Req&#39;d       Elap
+        # Job ID                  Username    Queue    Jobname          SessID  NDS   TSK   Memory      Time    S   Time
+        if not proc.stdout:
+            return df
+        out = proc.stdout.splitlines()[5:]
+        series = []
+        for line in out:
+            data = line.split(None, 10)
+            series.append({&#39;jobid&#39;: int(data[0]),
+                           &#39;username&#39;: data[1],
+                           &#39;queue&#39;: data[2],
+                           &#39;jobname&#39;: data[3],
+                           &#39;sessId&#39;: data[4],
+                           &#39;NDS&#39;: data[5],
+                           &#39;TSK&#39;: data[6],
+                           &#39;req_memory&#39;: data[7],
+                           &#39;req_time&#39;: data[8],
+                           &#39;S&#39;: data[9],
+                           &#39;elap_time&#39;: data[10],
+                           })
+        df = pd.DataFrame.from_records(series)
+        return df
+
+    def submit(self):
+        cmd = &#34;qsub&#34;
+        raise NotImplementedError
+
+    def cancel(self):
+        cmd = &#34;qdel&#34;
+        raise NotImplementedError
+
+
+class MOABClusterManager:
+    @property
+    def sims(self) -&gt; pd.DataFrame:
+        cmd = &#34;showq&#34;
+        raise NotImplementedError
+
+    def submit(self):
+        cmd = &#34;msub&#34;
+        raise NotImplementedError
+
+    def cancel(self):
+        cmd = &#34;canceljob&#34;
+        raise NotImplementedError
+
+
+class LocalFile(type(Path())):
+    &#34;&#34;&#34;Representation of a file in running_rabbit.
+
+    Generally, it is not advised to use this class, as it just is a helper class
+    for the larger Simulation and Stage classes.
+
+    Files need to be stored in the database to associate them with their
+    respective simulations and check if they have changed by external programs
+    like `gmx mdrun` or SLURM, MOAB job schedulers.
+
+    This is a subclass of pathlib.Path and can be used accordingly. Some changes
+    need to be considered:
+        * A running_rabbit File can not be moved beyond its parent simulation
+            directory. Use simulation.move for that operation.
+        * Renaming a running_rabbit File with the `rename()` method doesn&#39;t take
+            a full path specifier, but just the new filename. The `rename()`
+            method also makes sure not to overwrite existing files but rather
+            move them to a back-upped copy.
+        * Files can be pushed and rebuilt from the database.
+
+    &#34;&#34;&#34;
+
+    def __init__(
+        self,
+        *pathsegments,
+        db_file: Optional[Path] = None,
+        sim_hash: Optional[str] = None,
+        update: bool = False,
+    ):
+        self.instantiation_time = datetime.now()
+        self.db_file = db_file
+        self.sim_hash = sim_hash
+
+        # some checks
+        if not self.exists():
+            import errno
+
+            raise FileNotFoundError(
+                errno.ENOENT,
+                os.strerror(errno.ENOENT),
+                (
+                    f&#34;`running_rabbit.&#34;
+                    f&#34;{self.__class__.__name__}` only handles existing files. The &#34;
+                    f&#34;file {Path(*pathsegments)} does not exist.&#34;
+                ),
+            )
+
+        if self.is_dir():
+            import errno
+
+            raise IsADirectoryError(
+                errno.EISDIR,
+                os.strerror(errno.EISDIR),
+                (
+                    f&#34;`running_rabbit.&#34;
+                    f&#34;{self.__class__.__name__}` only handles files. The &#34;
+                    f&#34;path {Path(*pathsegments)} is a directory.&#34;
+                ),
+            )
+
+        # check database for duplicate
+        if self.db_file is not None:
+            if self.in_database:
+                files, _ = get_db(self.db_file)
+                if self.hash != files.loc[str(self)][&#34;hash&#34;] and not update:
+                    raise Exception(
+                        f&#34;File {self} has changed on disk since last checking. Use the &#34;
+                        f&#34;parent simulation to update his file.&#34;
+                    )
+        super().__init__()
+
+    @classmethod
+    def from_series(cls, series: pd.Series, db_file: Path, update: bool = False):
+        new_class = cls(series.name, db_file=db_file, sim_hash=series[&#34;sim_hash&#34;], update=update)
+        new_class.instantiation_time = series[&#34;time_added&#34;]
+        return new_class
+
+    @property
+    def hash(self):
+        return hash_files(self)[0]
+
+    @property
+    def in_database(self):
+        if self.db_file is None:
+            raise Exception(&#34;Set the `db_file` attribute of this file to check.&#34;)
+        files, _ = get_db(self.db_file)
+        return str(self) in files.index
+
+    def to_database(self):
+        if self.sim_hash is None:
+            raise Exception(
+                &#34;This file is not associated to a simulation and thus &#34;
+                &#34;can&#39;t be pushed to the database.&#34;
+            )
+        files, sims = get_db(self.db_file)
+        series = pd.Series(
+            {
+                &#34;hash&#34;: self.hash,
+                &#34;time_added&#34;: self.instantiation_time,
+                &#34;last_time_checked&#34;: datetime.now(),
+                &#34;sim_hash&#34;: self.sim_hash
+            }
+        )
+        series.name = str(self)
+        if self.in_database:
+            files.at[str(self)] = series
+        else:
+            files = pd.concat([files, series.to_frame().T], axis=&#34;rows&#34;)
+        store_dfs_to_hdf5(self.db_file, files, sims)
+
+    def rename(self, target, backup=False):
+        self_basedir = self.parent
+        if os.path.isdir(target):
+            if self_basedir != os.path.dirname(target):
+                raise Exception(
+                    &#34;Running_rabbit.File can&#39;t be moved beyond the &#34;
+                    &#34;directory boundaries.&#34;
+                )
+        else:
+            target = self.parent / target
+
+        if target.exists():
+            if not backup:
+                raise Exception(
+                    f&#34;File at {target} already exists. Set `backup` &#34;
+                    f&#34;to True to rename the file and keep a backup &#34;
+                    f&#34;of {target}.&#34;
+                )
+            new_target = target.parent / (target.name + &#34;.bak&#34;)
+            new_target = advance_file_counter(new_target)
+            shutil.move(target, new_target)
+
+        # move in the database
+        if self.in_database:
+            rename_file(self, target)
+
+        # execute super
+        newclass = super().rename(target=target)
+        newclass.sim_hash = self.sim_hash
+        return newclass
+
+    def replace(self, target):
+        raise NotImplementedError(
+            &#34;Disallow movement beyond the sim_dir and check for updates.&#34;
+        )
+        # super().replace(target=target)
+
+    def unlink(self, **kwargs):
+        raise Exception(
+            f&#34;Can&#39;t unlink with `running_rabbit.&#34;
+            f&#34;{self.__class__.__name__}. Use `simulation.delete` instead.&#34;
+        )
+
+    def rmdir(self):
+        raise Exception(f&#34;Can&#39;t rmdir with `running_rabbit.{self.__class__.__name__}`.&#34;)
+
+    def touch(self, mode=438, exist_ok=True):
+        raise Exception(
+            f&#34;Touch not permitted with `running_rabbit.&#34; f&#34;{self.__class__.__name__}`.&#34;
+        )
+
+    def symlink_to(self, target, target_is_directory=False):
+        raise Exception(&#34;symlink and wait for finished download to unlink.&#34;)
+
+
+class Simulation:
+    def __init__(
+        self,
+        tpr_file: Path,
+        db_file: Path,
+        state: str = &#34;SETUP&#34;,
+        instantiation_time: Optional[datetime] = None,
+        job_ids: Optional[list[int]] = None,
+    ) -&gt; None:
+        self.tpr_file = tpr_file
+        self.state = SimState[state]
+        if instantiation_time is None:
+            self.instantiation_time = datetime.now()
+        else:
+            self.instantiation_time = instantiation_time
+        if job_ids is None:
+            self.job_ids = []
+        else:
+            self.job_ids = job_ids
+        self.db_file = db_file
+
+    @classmethod
+    def from_hash(cls, hash: str, db_file: Path):
+        _, sims = get_db(db_file)
+        series = sims.loc[hash]
+        return cls.from_series(series, db_file)
+
+    @classmethod
+    def from_series(cls, series: pd.Series, db_file: Path):
+        return cls(
+            Path(series[&#34;tpr_file&#34;]),
+            db_file,
+            series[&#34;state&#34;],
+            series[&#34;time_added&#34;],
+            [int(i) for i in series[&#34;job_ids&#34;].split(&#34;, &#34;)] if series[&#34;job_ids&#34;] != &#34;&#34; else None,
+        )
+
+    @property
+    def directory(self) -&gt; Path:
+        return self.tpr_file.parent
+
+    @property
+    def in_database(self) -&gt; bool:
+        _, sims = get_db(self.db_file)
+        return self.hash in sims.index
+
+    def update_files(self) -&gt; None:
+        files, _ = get_db(self.db_file)
+        for i, row in files[files[&#34;sim_hash&#34;] == self.hash].iterrows():
+            file = LocalFile.from_series(row, self.db_file, update=True)
+            file.to_database()
+
+    def to_database(self) -&gt; None:
+        files, sims = get_db(self.db_file)
+        series = pd.Series(
+            {
+                &#34;tpr_file&#34;: str(self.tpr_file),
+                &#34;time_added&#34;: self.instantiation_time,
+                &#34;state&#34;: str(self.state),
+                &#34;last_time_checked&#34;: datetime.now(),
+                &#34;job_ids&#34;: &#34;, &#34;.join(map(str, self.job_ids)),
+            }
+        )
+        series.name = self.hash
+        if self.in_database:
+            sims.at[self.hash] = series
+        else:
+            sims = pd.concat([sims, series.to_frame().T], axis=&#34;rows&#34;)
+        store_dfs_to_hdf5(self.db_file, files, sims)
+
+    @property
+    def hash(self) -&gt; str:
+        return md5(str(self.tpr_file).encode()).hexdigest()
+
+    @property
+    def id(self) -&gt; str:
+        return self.hash[:7]
+
+    @property
+    def files(self) -&gt; list[LocalFile]:
+        files, _ = get_db(self.db_file)
+        files_out = []
+        for i, row in files[files[&#34;sim_hash&#34;] == self.hash].iterrows():
+            file = LocalFile.from_series(row, self.db_file)
+            files_out.append(file)
+        return files_out
+
+    def __str__(self):
+        return (
+            f&#34;Simulation using tpr_file: {self.tpr_file}, at state &#34;
+            f&#34;{self.state}, with id {self.id}, &#34;
+            f&#34;instantiated at &#34;
+            f&#34;{self.instantiation_time.replace(microsecond=0).isoformat()}&#34;
+        )
+
+
+################################################################################
+# Helper Functions
+################################################################################
+
+
+def get_iso8601_datetime() -&gt; str:
+    return datetime.now().replace(microsecond=0).isoformat()
+
+
+def _get_cluster_manager() -&gt; SlurmClusterManager | GridEngineClusterManager | MOABClusterManager:
+    # decide on slurm or moab
+    slurm_proc = run(&#34;squeue&#34;, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+    grid_engine_proc = run(&#34;qstat&#34;, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+    moab_proc = run(&#34;msub&#34;, stdout=PIPE, stderr=PIPE, universal_newlines=True, shell=True)
+    if &#34;not found&#34; not in slurm_proc.stderr:
+        return SlurmClusterManager()
+    elif &#34;not found&#34; not in grid_engine_proc.stderr:
+        return GridEngineClusterManager()
+    elif &#34;not found&#34; not in moab_proc.stderr:
+        return MOABClusterManager()
+    else:
+        raise Exception(&#34;Could not determine the workload manager. Neither `squeue` (slurm) or `qstat` (moab) seems to work.&#34;)
+
+
+def hash_files(*files):
+    return [hashfile(str(file), hexdigest=True) for file in files]
+
+
+def store_dfs_to_hdf5(
+    hdf5_file: Path,
+    files: pd.DataFrame,
+    sims: pd.DataFrame,
+) -&gt; None:
+    store = pd.HDFStore(hdf5_file)
+    store[&#34;sims&#34;] = sims
+    store[&#34;files&#34;] = files
+    store.close()
+
+
+def load_dfs_from_hdf5(hdf5_file: Path) -&gt; tuple[DataFrame, DataFrame]:
+    files = pd.read_hdf(hdf5_file, &#34;files&#34;)
+    sims = pd.read_hdf(hdf5_file, &#34;sims&#34;)
+    return files, sims
+
+
+def get_db(db_file: Path) -&gt; tuple[DataFrame, DataFrame]:
+    if not Path(db_file).is_file():
+        files = pd.DataFrame(
+            {
+                &#34;file&#34;: [],
+                &#34;hash&#34;: [],
+                &#34;time_added&#34;: [],
+                &#34;last_time_checked&#34;: [],
+                &#34;sim_hash&#34;: [],
+            }
+        )
+        files = files.astype(
+            {
+                &#34;file&#34;: str,
+                &#34;hash&#34;: str,
+                &#34;time_added&#34;: &#34;datetime64[ns]&#34;,
+                &#34;last_time_checked&#34;: &#34;datetime64[ns]&#34;,
+                &#34;sim_hash&#34;: str,
+            }
+        )
+        files = files.set_index(&#34;file&#34;)
+        sims = pd.DataFrame(
+            {
+                &#34;tpr_file&#34;: [],
+                &#34;time_added&#34;: [],
+                &#34;last_time_checked&#34;: [],
+                &#34;state&#34;: [],
+                &#34;job_ids&#34;: [],
+            }
+        )
+        sims = sims.astype(
+            {
+                &#34;tpr_file&#34;: str,
+                &#34;time_added&#34;: &#34;datetime64[ns]&#34;,
+                &#34;last_time_checked&#34;: &#34;datetime64[ns]&#34;,
+                &#34;state&#34;: str,
+                &#34;job_ids&#34;: str,
+            }
+        )
+        sims.index.name = &#34;hash&#34;
+        sims = sims.sort_values(by=&#34;time_added&#34;)
+        store_dfs_to_hdf5(db_file, files, sims)
+        return files, sims
+    else:
+        return load_dfs_from_hdf5(db_file)
+
+
+################################################################################
+# Main
+################################################################################
+
+
+@click.group()
+@click.option(
+    &#34;-D&#34;,
+    &#34;--debug&#34;,
+    is_flag=True,
+    default=False,
+    help=&#34;Enable debug mode&#34;,
+)
+@click.version_option(__version__, &#34;-v&#34;, &#34;--version&#34;)
+@click.pass_context
+def cli(
+    ctx: click.Context,
+    debug: bool,
+) -&gt; int:
+    ctx.ensure_object(dict)
+    ctx.obj[&#34;DEBUG&#34;] = debug
+    if debug:
+        click.echo(f&#34;Running in debug mode. Printing additional info.&#34;)
+    return 1
+
+
+################################################################################
+# Commands
+################################################################################
+
+
+@click.argument(
+    &#34;identifier&#34;,
+    required=False,
+    nargs=-1,
+    type=click.UNPROCESSED,
+)
+@click.option(
+    &#34;-n&#34;,
+    required=False,
+    default=&#34;10&#34;,
+)
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create&#34;,
+)
+@cli.command(name=&#34;files&#34;, help=&#34;List files in the database.&#34;)
+@click.pass_context
+def list_files(
+        ctx: click.Context,
+        identifier: Optional[list[str]] = None,
+        n: str = &#34;10&#34;,
+        db_file: Path = Path(&#34;sims.h5&#34;),
+) -&gt; pd.DataFrame:
+    if identifier[0] == &#34;-h&#34; or identifier[0] == &#34;--help&#34;:
+        click.echo(ctx.get_help())
+        return 0
+    if not identifier:
+        identifier = (&#34;today&#34;, )
+    db_file = Path(db_file)
+    files, _ = get_db(db_file)
+    identifier = &#34; &#34;.join(identifier)
+    if identifier == &#34;tail&#34;:
+        files = files.tail(int(n))
+    elif identifier == &#34;head&#34;:
+        files = files.head(int(n))
+    elif identifier in files.index.str[:7]:
+        pass
+    else:
+        try:
+            identifier = magicdate.magicdate(identifier)
+            if isinstance(identifier, date):
+                identifier = datetime.combine(identifier, datetime.min.time())
+            files = files[files[&#34;time_added&#34;] &gt; identifier]
+        except:
+            click.echo(
+                f&#34;simulation_attender.py files can take IDENTIFIER arguments like: &#34;
+                f&#34;&#39;tail -n 20&#39;, or &#39;today&#39;, or &#39;1 week ago&#39;. The argument &#34;
+                f&#34;you provided &#39;{identifier}&#39; could not be understood.&#34;
+            )
+            return pd.DataFrame({})
+    prettify(files)
+
+
+@click.argument(
+    &#34;identifier&#34;,
+    required=False,
+    nargs=-1,
+    type=click.UNPROCESSED,
+)
+@click.option(
+    &#34;-n&#34;,
+    required=False,
+    default=&#34;10&#34;,
+)
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create&#34;,
+)
+@cli.command(
+    name=&#34;list&#34;,
+    help=&#34;List simulations in the database.&#34;,
+    context_settings=dict(
+            ignore_unknown_options=True,
+            allow_extra_args=True,
+    )
+)
+@click.pass_context
+def list_sims(
+    ctx: click.Context,
+    identifier: Optional[list[str]] = None,
+    n: str = &#34;10&#34;,
+    db_file: Path = Path(&#34;sims.h5&#34;),
+) -&gt; pd.DataFrame:
+    if not identifier:
+        identifier = (&#34;today&#34;, )
+    else:
+        if identifier[0] == &#34;-h&#34; or identifier[0] == &#34;--help&#34;:
+            click.echo(ctx.get_help())
+            return 0
+        if identifier[0] == &#34;slice&#34;:
+            n = &#34;&#34;.join(identifier[1:])
+            identifier = (&#34;slice&#34;, )
+    return _list_sims(ctx, identifier, n, db_file, print_df=True)
+
+
+def _list_sims(
+    ctx: click.Context,
+    identifier: tuple[str],
+    n: str = &#34;10&#34;,
+    db_file: Path = Path(&#34;sims.h5&#34;),
+    print_df: bool = True,
+) -&gt; pd.DataFrame:
+    db_file = Path(db_file)
+    _, sims = get_db(db_file)
+    identifier = &#34; &#34;.join(identifier)
+    all_job_ids = [i for j in sims[&#34;job_ids&#34;] for i in list(map(str, j.split(&#34;.&#34;)))]
+    all_job_ids = list(filter(lambda x: bool(x), all_job_ids))
+    if identifier == &#34;tail&#34;:
+        sims = sims.tail(int(n))
+    elif identifier == &#34;head&#34;:
+        sims = sims.head(int(n))
+    elif identifier == &#34;slice&#34;:
+        ind = slice(*map(lambda x: int(x.strip()) if x.strip() else None, n.split(&#39;:&#39;)))
+        click.echo(ind)
+        sims = sims.iloc[ind]
+    elif identifier in sims.index.str[:7] or identifier in sims.index.str[:7]:
+        sims.index = sims.index.str[:7]
+    elif identifier.upper() in SimState.__members__:
+        sims = sims[sims[&#34;state&#34;] == identifier.upper()]
+    elif identifier in all_job_ids:
+        raise Exception(&#34;Accessing simulation by job_id currently not possible.&#34;)
+    else:
+        try:
+            identifier = magicdate.magicdate(identifier)
+            if isinstance(identifier, date):
+                identifier = datetime.combine(identifier, datetime.min.time())
+            sims = sims[sims[&#34;time_added&#34;] &gt; identifier]
+        except:
+            click.echo(f&#34;{identifier}, {identifier}, {identifier in SimState}&#34;)
+            click.echo(
+                f&#34;simulation_attender.py list can take IDENTIFIER arguments like: &#34;
+                f&#34;&#39;tail -n 20&#39;, &#39;today&#39;, &#39;1 week ago&#39;, &#39;setup&#39;, &#39;running&#39;, or &#34;
+                f&#34;&#39;slice -n -5:&#39;.The argument you provided &#39;{identifier}&#39; &#34;
+                f&#34;could not be understood.&#34;
+            )
+            return pd.DataFrame({})
+    if print_df:
+        sims.index = sims.index.str[:7]
+        sims.index.name = &#34;id&#34;
+        prettify(sims)
+    return sims
+
+
+@click.argument(
+    &#34;identifier&#34;,
+    required=False,
+    nargs=-1,
+    type=click.UNPROCESSED,
+)
+@click.option(
+    &#34;-n&#34;,
+    required=False,
+    default=&#34;10&#34;,
+)
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create&#34;,
+)
+@click.option(
+    &#34;-t&#34;,
+    &#34;--template-file&#34;,
+    &#34;template_file&#34;,
+    default=&#34;&#34;,
+    type=str,
+    help=&#34;The template file to fill with values.&#34;,
+)
+@cli.command(
+    help=&#34;Add job.sh files to sims using a template.&#34;,
+    context_settings=dict(
+        ignore_unknown_options=True,
+        allow_extra_args=True,
+    ),
+)
+@click.pass_context
+def template(
+    ctx: click.Context,
+    identifier: Optional[tuple[str]] = None,
+    n: str = &#34;10&#34;,
+    db_file: Path = Path(&#34;sims.h5&#34;),
+    template_file: str = &#34;&#34;,
+) -&gt; int:
+    # filter list arg
+    extra_args = {
+        k: v for k, v in zip(identifier[:-1], identifier[1:]) if k.startswith(&#34;--&#34;)
+    }
+    dropping_args = {
+        k: v
+        for k, v in zip(identifier[:-1], identifier[1:])
+        if k.startswith(&#34;-&#34;) and not k.startswith(&#34;--&#34;)
+    }
+    if dropping_args:
+        click.echo(
+            f&#34;Dropping these args, because templating args need two hypens (e.g. &#39;--cmd&#39;):\n&#34;
+            f&#34;{dropping_args}&#34;
+        )
+    args_to_delete = (
+        list(extra_args.keys())
+        + list(extra_args.values())
+        + list(dropping_args.keys())
+        + list(dropping_args.values())
+    )
+    identifier = tuple(filter(lambda x: x not in args_to_delete, identifier))
+    extra_args = {k.lstrip(&#34;-&#34;): v for k, v in extra_args.items()}
+    if identifier == (&#34;-h&#34;, ) or identifier == (&#34;--help&#34;, ):
+        click.echo(ctx.get_help())
+        return 0
+    identifier = (&#34;setup&#34;,) if not identifier else identifier
+
+    # get sims to template
+    sims_to_template = _list_sims(ctx, identifier, n, db_file, print_df=False)
+    if ctx.obj[&#34;DEBUG&#34;]:
+        click.echo(f&#34;These sims will be templated: {sims_to_template}&#34;)
+    if sims_to_template.size == 0:
+        click.echo(
+            f&#34;simulation_attender.py template can take IDENTIFIER arguments like: &#34;
+            f&#34;&#39;tail -n 20&#39;, or &#39;today&#39;, or &#39;1 week ago&#39;. The argument &#34;
+            f&#34;you provided &#39;{identifier}&#39; does not return any sims.&#34;
+        )
+        return 1
+
+    # prepare the template
+    if not template_file:
+        try:
+            _get_cluster_manager()
+            TEMPLATE: str = JOB_TEMPLATE
+        except Exception:
+            TEMPLATE: str = LOCAL_BATCH
+        template = jinja2.Template(TEMPLATE, undefined=jinja2.StrictUndefined)
+    else:
+        template = jinja2.Template(Path(template_file).read_text(), undefined=jinja2.StrictUndefined)
+
+    for i, row in sims_to_template.iterrows():
+        sim = Simulation.from_series(row, db_file)
+        if sim.state &gt;= SimState.TEMPLATED:
+            continue
+
+        #  prepare the template dict
+        template_dict = {&#39;directory&#39;: sim.directory.resolve()} | extra_args
+        if &#34;email&#34; not in template_dict:
+            template_dict[&#34;email&#34;] = &#34;no-one@example.com&#34;
+        for key, val in template_dict.items():
+            if &#34;{{ stem }}&#34; in str(val):
+                template_dict[key] = val.replace(&#34;{{ stem }}&#34;, sim.tpr_file.stem)
+        try:
+            rendered_text = template.render(template_dict)
+        except jinja2.exceptions.UndefinedError as e:
+            missing = str(e).split(&#34;&#39;&#34;)[1]
+            msg = (f&#34;The placeholder &#39;{missing}&#39; in the template needs a definition &#34;
+                   f&#34;Pass the argument --{missing} to the template call.&#34;)
+            raise Exception(msg)
+        job_file = Path(sim.directory) / &#34;job.sh&#34;
+        job_file.write_text(rendered_text)
+        job_file = LocalFile(job_file, db_file=db_file, sim_hash=sim.hash)
+        job_file.to_database()
+        sim.state = SimState[&#34;TEMPLATED&#34;]
+        sim.to_database()
+    return 0
+
+
+@click.argument(
+    &#34;start-dir&#34;,
+    required=True,
+)
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create&#34;,
+)
+@click.option(
+    &#34;-s&#34;,
+    &#34;--skip-conflicts&#34;,
+    &#34;skip&#34;,
+    is_flag=True,
+    default=False,
+    help=(&#34;Skip over otherwise conflicting tpr files. Simulation_attender.py can &#34;
+         &#34;only track one simulation per directory. This means, that some tpr files won&#39;t &#34;
+         &#34;be added to the database&#34;),
+)
+@click.option(
+    &#34;-p&#34;,
+    &#34;--pattern&#34;,
+    &#34;pattern&#34;,
+    default=&#34;&#34;,
+    type=str,
+    help=&#34;A pattern to match agains the files found&#34;,
+)
+@cli.command(help=&#34;Collect .tpr files from a starting_directory.&#34;)
+@click.pass_context
+def collect(
+    ctx: click.Context,
+    start_dir: str,
+    pattern: str,
+    db_file: str,
+    skip: bool = False,
+) -&gt; int:
+    db_file = Path(db_file)
+    start_dir = Path(start_dir).resolve()
+    click.echo(f&#34;Collecting simulations in {start_dir}&#34;)
+    tpr_files = [LocalFile(f) for f in start_dir.rglob(f&#34;**/{pattern}*tpr&#34;)]
+    click.echo(f&#34;Found {len(tpr_files)} tpr files in {start_dir}&#34;)
+    if ctx.obj[&#39;DEBUG&#39;]:
+        click.echo(&#34;Here are the tpr files:&#34;)
+        for tpr_file in tpr_files:
+            click.echo(str(tpr_file))
+    # track collected sims
+    collected_sims = 0
+
+    # iterate over tpr files and create simulation objects
+    for i, tpr_file in enumerate(tpr_files):
+        if ctx.obj[&#39;DEBUG&#39;]:
+            click.echo(f&#34;Adding {tpr_file} to database.&#34;)
+        sim = Simulation(tpr_file, db_file)
+        if not sim.in_database:
+            files, _ = get_db(db_file)
+            if files.size &gt; 0:
+                existing_tpr_files_dirs = set(files.index.str.split(&#34;/&#34;).str[:-1].str.join(&#34;/&#34;).tolist())
+            else:
+                existing_tpr_files_dirs = []
+            if str(tpr_file.parent) in existing_tpr_files_dirs and not skip:
+                click.echo(f&#34;The database already tracks a tpr file in {tpr_file.parent} &#34;
+                           f&#34;Please move {tpr_file} somewhere else; simulation_attender.py &#34;
+                           f&#34;can only track one tpr_file per directory.&#34;)
+                return 3
+            elif str(tpr_file.parent) in existing_tpr_files_dirs and skip:
+                click.echo(f&#34;Skipping {tpr_file}, because a sim in that directory is already tracked.&#34;)
+                continue
+            sim.to_database()
+            tpr_file.sim_hash = sim.hash
+            tpr_file.db_file = db_file
+            tpr_file.to_database()
+            for file in tpr_file.parent.glob(&#34;*&#34;):
+                if file.is_file():
+                    file = LocalFile(file)
+                    file.db_file = db_file
+                    file.sim_hash = sim.hash
+                    file.to_database()
+            collected_sims += 1
+        else:
+            if ctx.obj[&#34;DEBUG&#34;]:
+                click.echo(f&#34;The file {tpr_file} is already tracked by {sim}.&#34;)
+
+    if collected_sims &gt; 0:
+        click.echo(f&#34;Collected {collected_sims} new tpr files.&#34;)
+    else:
+        click.echo(f&#34;There were no (new) tpr files in the directory {start_dir}.&#34;)
+    return 0
+
+
+@cli.command(help=(&#34;Runs enqueued simulations and prints general info. &#34;
+                   &#34;It is encouraged to call this function multiple times until &#34;
+                   &#34;enqueued sims have concluded.&#34;))
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create&#34;,
+)
+@click.option(
+    &#34;-cm&#34;,
+    &#34;--cluster-manager&#34;,
+    &#34;cluster_manager&#34;,
+    default=&#34;auto&#34;,
+    type=str,
+    help=(&#34;The cluster manager to use. Can be &#39;auto&#39; to detect either slurm, moab, gridengine.&#34;
+          &#34;Can be &#39;slurm&#39;, &#39;moab&#39;, &#39;gridengine&#39;, or &#39;local&#39;. If &#39;local&#39; is &#34;
+          &#34;provided, the batch script will be executed as a background process and &#34;
+          &#34;the pid will be used as jobid.&#34;),
+)
+@click.pass_context
+def run(
+    ctx: click.Context,
+    db_file: str,
+    cluster_manager: str = &#34;auto&#34;,
+) -&gt; int:
+    # get db files
+    db_file = Path(db_file)
+    check_file = db_file.parent / (&#34;.&#34; + db_file.name + &#34;_check.h5&#34;)
+
+    # decide on cluster manager
+    if cluster_manager == &#34;auto&#34;:
+        manager = _get_cluster_manager()
+    elif cluster_manager == &#34;slurm&#34;:
+        manager = SlurmClusterManager()
+    elif cluster_manager == &#34;moab&#34;:
+        manager = MOABClusterManager()
+    elif cluster_manager == &#34;gridengine&#34;:
+        manager = GridEngineClusterManager()
+    elif cluster_manager == &#34;local&#34;:
+        manager = LocalManager()
+    else:
+        raise Exception(&#34;cluster_manager must be one of: &#39;auto&#39;, &#39;slurm&#39;, &#34;
+                        &#34;&#39;moab&#39;, &#39;cluster_manager&#39;, or &#39;local&#39;.&#34;)
+
+    # load dbs
+    current_files, current_sims = get_db(db_file)
+    last_checked_files, last_checked_sims = get_db(check_file)
+
+    # if new sims print
+    added_sims = list(set(current_sims.index) - set(last_checked_sims.index))
+    diff_sims = current_sims.loc[list(added_sims)]
+    if diff_sims.size &gt; 0:
+        click.echo(&#34;Since last checking, these sims have been added:&#34;)
+        for i, diff_sim in diff_sims.iterrows():
+            click.echo(str(Simulation.from_series(diff_sim, db_file)))
+    else:
+        click.echo(&#34;Since last checking no sims have been added.&#34;)
+
+    # iterate over all ENQUEUED sims and check their state print
+    found = False
+    resubmit = False
+    for i, row in current_sims.iterrows():
+        sim = Simulation.from_series(row, db_file=db_file)
+        # check whether state has changed
+        if i in last_checked_sims.index:
+            if (old_state := last_checked_sims.loc[i, &#34;state&#34;]) != row[&#34;state&#34;]:
+                click.echo(f&#34;Since last checking, the state of sim {i[:7]} has changed &#34;
+                           f&#34;from {old_state} to {row[&#39;state&#39;]}.&#34;)
+                found = True
+        current_state = SimState[row[&#34;state&#34;]]
+
+        # do stuff with enqueued sims
+        if current_state is SimState.ENQUEUED:
+            # check for new files
+            new_files = []
+            for file in Path(row[&#34;tpr_file&#34;]).parent.glob(&#34;*&#34;):
+                if not file.is_file():
+                    continue
+                if str(file) not in current_files:
+                    file = LocalFile(file, db_file=db_file, sim_hash=sim.hash)
+                    file.to_database()
+                    new_files.append(file)
+            if len(new_files) &gt; 0:
+                click.echo(f&#34;In the directory of simulation {sim.id}, {len(new_files)} &#34;
+                           f&#34;new files have been created. The simulation changed its &#34;
+                           f&#34;state from ENQUEUED to RUNNING.&#34;)
+                sim.state = SimState.RUNNING
+                current_state = SimState.RUNNING
+                sim.to_database()
+                found = True
+            else:
+                click.echo(f&#34;The simulation {sim.id} is still enqueued.&#34;)
+
+        # do stuff with running
+        if current_state is SimState.RUNNING:
+            # check whether still running
+            if np.isin(np.array(sim.job_ids), manager.sims[&#34;jobid&#34;]):
+                click.echo(f&#34;Simulation {sim.id} is still running.&#34;)
+            else:
+                click.echo(f&#34;Simulation {sim.id} not running anymore. Checking for completion.&#34;)
+                # check for completion
+                files_ = list(filter(lambda x: x.is_file(), Path(row[&#34;tpr_file&#34;]).parent.glob(&#34;*&#34;)))
+                if any([f.suffix == &#34;.gro&#34; for f in files_]):
+                    click.echo(f&#34;The simulation {sim.id} has produced a .gro file. &#34;
+                               f&#34;It will be marked as finished.&#34;)
+                    sim.state = SimState.FINISHED
+                    sim.to_database()
+                    sim.update_files()
+                    # for file in files_:
+                    #     file = LocalFile(file, db_file=db_file, sim_hash=sim.hash)
+                    #     file.to_database()
+                    found = True
+                    resubmit = True
+                else:
+                    click.echo(f&#34;Simulation {sim.id} with jobid {sim.job_ids[-1]} &#34;
+                               f&#34;not in jobs anymore. Simulation could have crashed. &#34;
+                               f&#34;Checking whether any files changed since last checking.&#34;)
+                    files_, _ = get_db(db_file)
+                    sleep(10)
+                    for i, row in files_[files_[&#34;sim_hash&#34;] == sim.hash].iterrows():
+                        file = LocalFile.from_series(row, db_file)
+                        if row[&#39;hash&#39;] != file.hash:
+                            click.echo(f&#34;The files of the simulation are still written to. &#34;
+                                       f&#34;I will mark this sim as orphaned. Maybe it will &#34;
+                                       f&#34;conclude sometime.&#34;)
+                            sim.state = SimState.ORPHANED
+                            sim.to_database()
+                            break
+                    else:
+                        sim.state = SimState.CRASHED
+                        sim.to_database()
+                        click.echo(f&#34;The simulation has crashed. No files are written to.&#34;)
+
+    if not found:
+        click.echo(&#34;Since last checking no sims have changed their state.&#34;)
+    # finally write the new files and sims to the check db
+    store_dfs_to_hdf5(check_file, current_files, current_sims)
+
+    if resubmit and cluster_manager == &#34;local&#34;:
+        click.echo(&#34;A local simulation has completed. Submitting the next simulation.&#34;)
+        _submit(db_file=str(db_file), cluster_manager=cluster_manager)
+
+@click.option(
+    &#34;-db&#34;,
+    &#34;--database-file&#34;,
+    &#34;db_file&#34;,
+    default=&#34;sims.h5&#34;,
+    type=str,
+    help=&#34;The database file to read or create.&#34;,
+)
+@click.option(
+    &#34;-max&#34;,
+    &#34;--max-concurrent-sims&#34;,
+    &#34;max_concurrent_sims&#34;,
+    default=50,
+    type=int,
+    help=&#34;The maximum number of concurrent simulations.&#34;,
+)
+@click.option(
+    &#34;-cm&#34;,
+    &#34;--cluster-manager&#34;,
+    &#34;cluster_manager&#34;,
+    default=&#34;auto&#34;,
+    type=str,
+    help=(&#34;The cluster manager to use. Can be &#39;auto&#39; to detect either slurm, moab, gridengine.&#34;
+          &#34;Can be &#39;slurm&#39;, &#39;moab&#39;, &#39;gridengine&#39;, or &#39;local&#39;. If &#39;local&#39; is &#34;
+          &#34;provided, the batch script will be executed as a background process and &#34;
+          &#34;the pid will be used as jobid.&#34;),
+)
+@cli.command(help=&#34;Submits templated jobs.&#34;)
+@click.pass_context
+def submit(
+    ctx: click.Context,
+    db_file: str = &#34;sims.h5&#34;,
+    cluster_manager: str = &#34;auto&#34;,
+    max_concurrent_sims: int = 50,
+) -&gt; int:
+    return _submit(db_file, cluster_manager, max_concurrent_sims)
+
+
+def _submit(
+    db_file: str = &#34;sims.h5&#34;,
+    cluster_manager: str = &#34;auto&#34;,
+    max_concurrent_sims: int = 50,
+) -&gt; int:
+    db_file = Path(db_file)
+    if cluster_manager == &#34;auto&#34;:
+        manager = _get_cluster_manager()
+    elif cluster_manager == &#34;slurm&#34;:
+        manager = SlurmClusterManager()
+    elif cluster_manager == &#34;moab&#34;:
+        manager = MOABClusterManager()
+    elif cluster_manager == &#34;gridengine&#34;:
+        manager = GridEngineClusterManager()
+    elif cluster_manager == &#34;local&#34;:
+        manager = LocalManager()
+    else:
+        raise Exception(&#34;cluster_manager must be one of: &#39;auto&#39;, &#39;slurm&#39;, &#34;
+                        &#34;&#39;moab&#39;, &#39;cluster_manager&#39;, or &#39;local&#39;.&#34;)
+
+    files, sims = get_db(db_file)
+    for i, row in sims[sims[&#34;state&#34;] == &#34;TEMPLATED&#34;].iterrows():
+        number_of_current_sims = len(manager.sims)
+        if number_of_current_sims &gt;= max_concurrent_sims:
+            click.echo(f&#34;Currently {number_of_current_sims} are submitted or &#34;
+                       f&#34;running. I won&#39;t submit more than &#34;
+                       f&#34;max_concurrent_sims={max_concurrent_sims} simulations.&#34;)
+        sim = Simulation.from_series(row, db_file=db_file)
+        jobid = manager.submit(sim)
+        click.echo(f&#34;Submitted sim in {sim.directory} with jobid {jobid}.&#34;)
+
+        if isinstance(manager, LocalManager):
+            sim.to_database()
+            click.echo(&#34;I will not run more than one simulation on a local &#34;
+                       &#34;machine. Call submit again, when this one is finished.&#34;)
+            break
+
+    return 0
+
+
+################################################################################
+# Documentation
+################################################################################
+
+
+# add the command line usage
+_runner = CliRunner()
+_general_help = _runner.invoke(cli, [&#34;--help&#34;]).output
+_collect_help = _runner.invoke(cli, [&#34;collect&#34;, &#34;--help&#34;]).output
+_list_help = _runner.invoke(cli, [&#34;list&#34;, &#34;--help&#34;]).output
+_template_help = _runner.invoke(cli, [&#34;template&#34;, &#34;--help&#34;]).output
+_submit_help = _runner.invoke(cli, [&#34;submit&#34;, &#34;--help&#34;]).output
+_run_help = _runner.invoke(cli, [&#34;run&#34;, &#34;--help&#34;]).output
+_this_module.__doc__ += f&#34;&#34;&#34;# Command line usage:
+
+```raw
+{_general_help}
+```
+
+## Installation
+
+simulation_attender.py is a monolithic script you just need two files:
+
+- First install the requirements via:
+
+```bash
+$ pip install -r https://raw.githubusercontent.com/kevinsawade/simulation_attender/main/requirements.txt
+```
+
+- Then get the main file:
+
+```bash
+$ wget https://raw.githubusercontent.com/kevinsawade/simulation_attender/main/simulation_attender/simulation_attender.py
+```
+
+## Quickstart
+
+```bash
+# collect simulations
+python simulation_attender.py collect /work
+
+# template the simulations
+python ../simulation_attender/simulation_attender.py template --module_loads &#34;module load gromacs/2023.1&#34; --command &#34;gmx mdrun -deffnm {{ stem }}&#34;
+
+# list simulations
+python ../simulation_attender/simulation_attender.py list
+
+# submit
+python ../simulation_attender/simulation_attender.py submit
+
+# run and check
+python ../simulation_attender/simulation_attender.py run
+```
+
+## Usage
+
+You can call simulation attender from the command line by:
+
+```bash
+$ python simulation_attender.py --help
+```
+
+Simulation_attender.py stores states of simulations in a file called sims.h5.
+This file tracks not only the status of simulations but also all files inside the simulation directories.
+This means, that **a simulation needs to be alone in its directory**.
+
+### Collecting simulations
+
+Before you can start managing your simulations with simulation_attender, you need to add them
+to the database. That&#39;s where the `collect` command comes in. The collect command recourses through
+the directory provided as a positional argument (`START_DIR`) and looks for `.tpr` files. These files
+are added to the database file, which is standard `sims.h5`, but you can maintain many of these database files.
+Normally you only want to call:
+
+```bash
+$ python simulation_attender.py collect .
+```
+
+You can provide a grep pattern for `-p` to filter the `.tpr` files in `START_DIR`,
+to only use certain tpr files (e.g. `&#34;*test*&#34;`, don&#39;t forget the quotation marks `&#34;`, as
+the bash shell will usually expand the wildcard characters `*` before calling the command):
+
+```bash
+$ python simulation_attender.py collect /work_fs/username/workspace -p &#34;*test*&#34;
+```
+
+Change the database with the `-db` option:
+
+```bash
+$ python simulation_attender.py collect . -db grant1_sims.h5
+```
+
+As **there can only be one `.tpr` file per directory** you could run into some
+errors, if you have multiple in one directory. If you are sure what you are doing and
+only want to run the simulation of one `.tpr` file in the directory, you can skip
+these errors with the `-s` flag.
+
+```raw
+{_collect_help}
+```
+
+### Listing simulations
+
+The `list` command helps you to interact with the simulation database. It can take
+a wide variety of inputs to print only the rows you want from the database. The possibilities are::
+
+* `tail`: Print the last 5 rows of the database.
+* `tail -n 10`: Print the last 10 rows of the database.
+* `head`: Print the first five rows of the database.
+* `head -n 10`: Print the first 10 rows of the database.
+* `slice ::5`: Print every 5th row of the database.
+* `slice -20::3`: Print every 3rd row of the last 20 rows of the datbase.
+* `today`: Print simulations, that have been added today.
+* `1 week ago`: Print simulations that have been added in the last week.
+* More time-selections are available.
+* `running`: Print all running simulations.
+* `setup`: Print all simulations, currently in the setup stage.
+* `1asd4fg`: Print simulation with id `1asd4fg`.
+
+```raw
+{_list_help}
+```
+
+### Templating simulations
+
+The next step is to create job scripts for the respective simulations. You can
+provide a templated job script with the `-t` option. These job scripts should in general
+adhere to your cluster&#39;s own documentation page and might look like this:
+
+```bash
+#!/bin/bash
+#SBATCH --chdir=/path/to/sim_dir
+#SBATCH --export=NONE
+#SBATCH --mail-user=my_mail@university.com
+#SBATCH --mail-type=BEGIN,END
+
+module load gromacs/2023.1
+
+gmx_mpi mdrun -deffnm sim
+```
+
+or:
+
+```bash
+#!/bin/bash
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:05:00
+#PBS -l mem=1gb
+#PBS -S /bin/bash
+#PBS -N Simple_Script_Job
+#PBS -j oe
+#PBS -o LOG
+
+cd /path/to/sim_dir
+
+module load gromacs/2023.1
+
+mpirun -n 1 gmx_mpi mdrun -deffnm production
+```
+
+However, simulation_attender.py uses the jinja2 templating engine to fill your
+job scripts with appropriate values. This is especially because most job scripts contain
+a directory that needs to be adjusted for every job. Templates can be written like normal
+job scripts, but can contain `{{{{ placeholder }}}}` placeholders, in which the values will
+be filled with appropriate values from the simulations. A template can look like this:
+
+```bash
+#!/bin/bash
+#SBATCH --chdir={{{{ directory }}}}
+#SBATCH --export=NONE
+#SBATCH --mail-user={{{{ email }}}}
+#SBATCH --mail-type=BEGIN,END
+
+{{{{ module_loads }}}}
+
+cd {{{{ directory }}}}
+
+{{{{ command }}}}
+```
+
+The following placeholders are available by the simulation::
+
+* `{{{{ directory }}}}`: The directory, where the `.tpr` file is in.
+* `{{{{ stem }}}}`: The `stem` of the `.tpr` file (.i.e. for `production.tpr` the stem would be `production`).
+
+If placeholders are not defined simulation_attender will raise an Exception (except for the `{{{{ email }}}}` placeholder).
+Placeholder can be filled with arguments to the `template` call, like so:
+
+```bash
+$ python simulation_attender.py template --command &#34;gmx mdrun -deffnm {{{{ stem }}}}&#34; --module_loads &#34;module load gromacs/2023.1&#34;
+```
+
+The `template` command can also filter simulations like the `list` command. In that case, you could do:
+
+```bash
+$ python simulation_attender.py template today -t template_file.sh
+```
+
+The template command will create new files called `job.sh` in the respective simulation directories.
+
+```raw
+{_template_help}
+```
+
+### Submitting
+
+The `submit` command submits templated simulations to the job manager. It can interact with::
+
+* slurm
+* moab
+* gridengine
+
+cluster management software. The argument `-max` makes `submit` stop, when this number is reached.
+This can come in handy, if your cluster allows you to only have X amount of concurrent (pending and running) jobs.
+The `submit` command adds the jobid of the simulations to the database.
+You can also use simulation_attender.py to run simulations locally. In which
+case you should provide `-cm local` ot the `submit` call. Running locally is special, because the maximum
+number of concurrent simulations on a local system is 1. The `submit` command also writes a special job file
+to the simulation directory (lacking the `SBATCH` or `PBS` declarations) and uses the process&#39; PID as the
+jobid of the simulation. Example:
+
+```raw
+{_submit_help}
+```
+
+### Running
+
+The `run` command of simulation_attender.py is the jack of all trades. It looks through the database and
+updates you on your simulations.
+&#34;&#34;&#34;
+
+################################################################################
+# Execution
+################################################################################
+
+
+if __name__ == &#34;__main__&#34;:
+    raise SystemExit(cli())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="simulation_attender.simulation_attender.get_db"><code class="name flex">
+<span>def <span class="ident">get_db</span></span>(<span>db_file: Path) ‑> tuple[pandas.core.frame.DataFrame, pandas.core.frame.DataFrame]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_db(db_file: Path) -&gt; tuple[DataFrame, DataFrame]:
+    if not Path(db_file).is_file():
+        files = pd.DataFrame(
+            {
+                &#34;file&#34;: [],
+                &#34;hash&#34;: [],
+                &#34;time_added&#34;: [],
+                &#34;last_time_checked&#34;: [],
+                &#34;sim_hash&#34;: [],
+            }
+        )
+        files = files.astype(
+            {
+                &#34;file&#34;: str,
+                &#34;hash&#34;: str,
+                &#34;time_added&#34;: &#34;datetime64[ns]&#34;,
+                &#34;last_time_checked&#34;: &#34;datetime64[ns]&#34;,
+                &#34;sim_hash&#34;: str,
+            }
+        )
+        files = files.set_index(&#34;file&#34;)
+        sims = pd.DataFrame(
+            {
+                &#34;tpr_file&#34;: [],
+                &#34;time_added&#34;: [],
+                &#34;last_time_checked&#34;: [],
+                &#34;state&#34;: [],
+                &#34;job_ids&#34;: [],
+            }
+        )
+        sims = sims.astype(
+            {
+                &#34;tpr_file&#34;: str,
+                &#34;time_added&#34;: &#34;datetime64[ns]&#34;,
+                &#34;last_time_checked&#34;: &#34;datetime64[ns]&#34;,
+                &#34;state&#34;: str,
+                &#34;job_ids&#34;: str,
+            }
+        )
+        sims.index.name = &#34;hash&#34;
+        sims = sims.sort_values(by=&#34;time_added&#34;)
+        store_dfs_to_hdf5(db_file, files, sims)
+        return files, sims
+    else:
+        return load_dfs_from_hdf5(db_file)</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul>
+<li><a href="#simulation_attenderpy">simulation_attender.py</a><ul>
+<li><a href="#coverage-and-unittest-report">Coverage and Unittest Report</a></li>
+</ul>
+</li>
+<li><a href="#command-line-usage">Command line usage:</a><ul>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#quickstart">Quickstart</a></li>
+<li><a href="#usage">Usage</a><ul>
+<li><a href="#collecting-simulations">Collecting simulations</a></li>
+<li><a href="#listing-simulations">Listing simulations</a></li>
+<li><a href="#templating-simulations">Templating simulations</a></li>
+<li><a href="#submitting">Submitting</a></li>
+<li><a href="#running">Running</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="simulation_attender" href="index.html">simulation_attender</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="simulation_attender.simulation_attender.get_db" href="#simulation_attender.simulation_attender.get_db">get_db</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
