@@ -13,7 +13,7 @@ info "Spooling up docker containers."
 info "For a first-time build, this can take up to a few hours, because"
 info "I need to compile cmake, environment-modules and gromacs from source."
 info "To view the build progress, Ctrl^C this script and execute start_slurm.sh manually."
-./start_slurm.sh &> /dev/null
+./start_slurm.sh --d &> /dev/null
 docker compose run c1 bash test_in_docker.sh
 info "Tearing down docker containers."
 ./teardown.sh &> /dev/null
