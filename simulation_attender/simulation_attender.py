@@ -30,7 +30,11 @@ Simulation attender works with these cluster management systems::
 * moab
 * oracle gridengine
 
-Can also be used to track local simulations.
+**Features**::
+* Works with slurm, moab, gridengine and can also attend local simulations.
+* Track simulations and files using easy to understand databases.
+* One place to get status updates on all your runnung gromacs simulations.
+* Undo-feature: Did an oopsie? Undo the last command using `python simulation_attender.py undo`
 
 Coverage and Unittest Report
 ----------------------------
@@ -1342,6 +1346,7 @@ python ../simulation_attender/simulation_attender.py submit
 
 # run and check
 python ../simulation_attender/simulation_attender.py run
+```
 
 ## Usage
 
