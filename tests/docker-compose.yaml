@@ -139,8 +139,6 @@ services:
       dockerfile: slurm_master/Dockerfile
     environment:
       - LDAP_ADMIN_PASSWORD=adminpassword
-    ports:
-      - 222:22
     networks:
       default:
         aliases:
@@ -163,6 +161,8 @@ services:
       default:
         aliases:
           - c1.example.org
+    ports:
+      - 222:22
     volumes:
       - "./nfs_mount:/home"
       - "./work:/work"

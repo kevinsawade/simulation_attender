@@ -1325,6 +1325,24 @@ $ pip install -r https://raw.githubusercontent.com/kevinsawade/simulation_attend
 $ wget https://raw.githubusercontent.com/kevinsawade/simulation_attender/main/simulation_attender/simulation_attender.py
 ```
 
+## Quickstart
+
+```bash
+# collect simulations
+python simulation_attender.py collect /work
+
+# template the simulations
+python ../simulation_attender/simulation_attender.py template --module_loads "module load gromacs/2023.1" --command "gmx mdrun -deffnm {{ stem }}"
+
+# list simulations
+python ../simulation_attender/simulation_attender.py list
+
+# submit
+python ../simulation_attender/simulation_attender.py submit
+
+# run and check
+python ../simulation_attender/simulation_attender.py run
+
 ## Usage
 
 You can call simulation attender from the command line by:
