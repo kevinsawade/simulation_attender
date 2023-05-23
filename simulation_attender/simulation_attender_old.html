@@ -357,7 +357,7 @@ def delete_job(ctx, param, value):
     sims = _get_df_from_db_file(options[&#39;db_file&#39;])
     click.echo(f&#34;Deleting job_id {value}&#34;)
     idx = (sims[sims[&#39;jobid&#39;] == value]).index
-    assert len(idx) == 1, print(sims[sims[&#39;jobid&#39;] == value])
+    assert len(idx) == 1, sims[sims[&#39;jobid&#39;] == value]
     idx = idx[0]
     sims = sims.drop(idx, axis=0)
     sims.to_hdf(options[&#39;db_file&#39;], key=&#39;sims&#39;)
@@ -744,7 +744,7 @@ if __name__ == &#39;__main__&#39;:
     sims = _get_df_from_db_file(options[&#39;db_file&#39;])
     click.echo(f&#34;Deleting job_id {value}&#34;)
     idx = (sims[sims[&#39;jobid&#39;] == value]).index
-    assert len(idx) == 1, print(sims[sims[&#39;jobid&#39;] == value])
+    assert len(idx) == 1, sims[sims[&#39;jobid&#39;] == value]
     idx = idx[0]
     sims = sims.drop(idx, axis=0)
     sims.to_hdf(options[&#39;db_file&#39;], key=&#39;sims&#39;)
