@@ -42,11 +42,9 @@ class TestSimAttender:
     def test_help_message(self):
         """Checks, whether the CLI prints a help message and then exits."""
         result = self.runner.invoke(cli, ["--help"])
-        assert "--help" in result.output, print(
-            f"--help does not print a help message.")
+        assert "--help" in result.output, f"--help does not print a help message."
         result = self.runner.invoke(cli, ["collect", "--help"])
-        assert "--help" in result.output, print(
-            f"collect --help does not print a help message.")
+        assert "--help" in result.output, f"collect --help does not print a help message."
 
     def test_collect(self):
         """Tests, whether CLI collect /work is able to find all tpr files and then add them to the database"""
@@ -56,9 +54,9 @@ class TestSimAttender:
         shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
         assert (self.dir1 / "production.tpr").is_file()
         result = self.runner.invoke(cli, ["-D", "collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
-        assert "2" in result.output, print("There should be some printing here, informing the user about the new files")
+        assert "2" in result.output, "There should be some printing here, informing the user about the new files"
         _, sims = get_db(self.db_file)
-        assert len(sims) == 2, print("After adding 2 .tpr files, the sims dataframe should be len == 2.")
+        assert len(sims) == 2, "After adding 2 .tpr files, the sims dataframe should be len == 2."
 
     def test_list(self):
         """Tests whether CLI list understands tail, head, slice, today on lists sims and files."""
@@ -70,7 +68,7 @@ class TestSimAttender:
             shutil.copyfile(self.tpr_file, dir_ / "production.tpr")
         result = self.runner.invoke(cli, ["collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
         _, sims = get_db(self.db_file)
-        assert len(sims) == 12, print("After adding 12 .tpr files, the sims dataframe should be len == 12.")
+        assert len(sims) == 12, "After adding 12 .tpr files, the sims dataframe should be len == 12."
         result = self.runner.invoke(cli, ["list", "tail", "-n", "10"])
         assert result.output.count("SETUP") == 10
 
@@ -82,9 +80,9 @@ class TestSimAttender:
         shutil.copyfile(self.tpr_file, self.dir2 / "topol.tpr")
         result = self.runner.invoke(cli, ["-D", "collect", "/work", "-db", str(self.db_file)], catch_exceptions=False)
         result = self.runner.invoke(cli, ["run"], catch_exceptions=True)
-        assert result.output.count("Simulation") == 2, print("Adding 2 sims and then checking, should also print two sims.")
+        assert result.output.count("Simulation") == 2, "Adding 2 sims and then checking, should also print two sims."
         result = self.runner.invoke(cli, ["run"], catch_exceptions=True)
-        assert "no sims" in result.output, print("A second call to check should inform about no changes.")
+        assert "no sims" in result.output, "A second call to check should inform about no changes."
         with pytest.raises(Exception):
             self.runner.invoke(cli, ["template"], catch_exceptions=False)
         result = self.runner.invoke(cli, ["template", "--module-loads", "\"module load gromacs/2023.1\""])
